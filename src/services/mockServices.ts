@@ -1,21 +1,27 @@
 import { User, LoginCredentials, AuthResponse } from '@/services/authService';
 import { PlanoAula } from '@/services/planoService';
-import { MOCK_USERS, MOCK_PLANOS } from '@/services/mockData';
+import { MOCK_USERS, MOCK_PLANOS, MOCK_DISCIPLINAS, Disciplina } from '@/services/mockData';
 
 // Simula delay de rede
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Estado local dos planos (simula banco)
+// Estado local
 let planosDb = [...MOCK_PLANOS];
+let disciplinasDb = [...MOCK_DISCIPLINAS];
+// Usuários mutáveis
+let usersDb = [...MOCK_USERS];
 
 export const mockAuthService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     await delay(600);
-    const user = MOCK_USERS.find(
+    const user = usersDb.find(
       u => u.email === credentials.email && u.senha === credentials.senha
     );
     if (!user) {
       throw new Error('Credenciais inválidas');
+    }
+    if (user.status === 'inativo') {
+      throw new Error('Conta desativada. Contate a gestão.');
     }
     const { senha: _, ...userData } = user;
     return {
@@ -26,21 +32,94 @@ export const mockAuthService = {
 
   register: async (data: { nome: string; email: string; senha: string }): Promise<AuthResponse> => {
     await delay(600);
-    const exists = MOCK_USERS.find(u => u.email === data.email);
+    const exists = usersDb.find(u => u.email === data.email);
     if (exists) {
       throw new Error('Email já cadastrado');
     }
     const newUser: User = {
-      id: String(MOCK_USERS.length + 1),
+      id: String(Date.now()),
       nome: data.nome,
       email: data.email,
+      cpf: data.cpf,
       perfil: 'professor',
+      status: 'ativo',
+      dataCadastro: new Date().toISOString(),
+      disciplinasLecionadas: [],
     };
-    MOCK_USERS.push({ ...newUser, senha: data.senha });
+    usersDb.push({ ...newUser, senha: data.senha });
     return {
       token: `mock-token-${newUser.id}-${Date.now()}`,
       usuario: newUser,
     };
+  },
+};
+
+export const mockGestorService = {
+  // === Professores ===
+  listarProfessores: async (): Promise<User[]> => {
+    await delay(300);
+    return usersDb.filter(u => u.perfil === 'professor').map(({ senha, ...u }) => u as User);
+  },
+  salvarProfessor: async (prof: Partial<User & { senha?: string }>): Promise<User> => {
+    await delay(400);
+    if (prof.id) {
+      const idx = usersDb.findIndex(u => u.id === prof.id);
+      if (idx > -1) {
+        usersDb[idx] = { ...usersDb[idx], ...prof } as any;
+        const { senha, ...user } = usersDb[idx];
+        return user as User;
+      }
+    }
+    const novo = {
+      ...prof,
+      id: String(Date.now()),
+      perfil: 'professor',
+      status: prof.status || 'ativo',
+      dataCadastro: new Date().toISOString(),
+      disciplinasLecionadas: prof.disciplinasLecionadas || [],
+      senha: prof.senha || '123456',
+    } as any;
+    usersDb.push(novo);
+    const { senha, ...user } = novo;
+    return user as User;
+  },
+  excluirProfessor: async (id: string): Promise<void> => {
+    await delay(300);
+    const hasActivePlans = planosDb.some(p => p.professorId === id && p.status === 'rascunho');
+    if (hasActivePlans) {
+      throw new Error('Não é possível inativar. O professor possui planos de aula em andamento.');
+    }
+    const idx = usersDb.findIndex(u => u.id === id);
+    if (idx > -1) {
+      usersDb[idx].status = usersDb[idx].status === 'inativo' ? 'ativo' : 'inativo';
+    }
+  },
+
+  // === Disciplinas ===
+  listarDisciplinas: async (): Promise<Disciplina[]> => {
+    await delay(300);
+    return [...disciplinasDb];
+  },
+  salvarDisciplina: async (disc: Partial<Disciplina>): Promise<Disciplina> => {
+    await delay(400);
+    if (disc.id) {
+      const idx = disciplinasDb.findIndex(d => d.id === disc.id);
+      if (idx > -1) {
+        disciplinasDb[idx] = { ...disciplinasDb[idx], ...disc } as Disciplina;
+        return disciplinasDb[idx];
+      }
+    }
+    const nova: Disciplina = {
+      id: String(Date.now()),
+      nome: disc.nome || '',
+      cargaHoraria: disc.cargaHoraria || 0,
+    };
+    disciplinasDb.push(nova);
+    return nova;
+  },
+  excluirDisciplina: async (id: string): Promise<void> => {
+    await delay(300);
+    disciplinasDb = disciplinasDb.filter(d => d.id !== id);
   },
 };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { PlanoAula } from '@/services/planoService';
 import { mockPlanoService } from '@/services/mockServices';
 import { MOCK_USERS } from '@/services/mockData';
@@ -6,11 +7,13 @@ import Navbar from '@/components/Navbar';
 import StatCard from '@/components/StatCard';
 import PlanoCard from '@/components/PlanoCard';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileText, Calendar, Users, Search } from 'lucide-react';
+import { FileText, Calendar, Users, Search, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DashboardGestor: React.FC = () => {
+  const navigate = useNavigate();
   const [planos, setPlanos] = useState<PlanoAula[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [busca, setBusca] = useState('');
@@ -64,9 +67,15 @@ const DashboardGestor: React.FC = () => {
           <StatCard titulo="Professores Ativos" valor={professoresAtivos} icone={Users} />
         </div>
 
-        <div className="mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold">Todos os Planos de Aula</h2>
-          <p className="text-sm text-muted-foreground">Visualize os planos de todos os professores</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold">Todos os Planos de Aula</h2>
+            <p className="text-sm text-muted-foreground">Visualize os planos de todos os professores</p>
+          </div>
+          <Button onClick={() => navigate('/configuracoes')} className="gap-2 shrink-0">
+            <Settings className="h-4 w-4" />
+            Configurações
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">

@@ -11,6 +11,7 @@ import DashboardProfessor from "./pages/DashboardProfessor";
 import DashboardGestor from "./pages/DashboardGestor";
 import PlanoForm from "./pages/PlanoForm";
 import PlanoView from "./pages/PlanoView";
+import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/planos/novo" element={<ProtectedRoute><PlanoForm /></ProtectedRoute>} />
             <Route path="/planos/:id" element={<ProtectedRoute><PlanoView /></ProtectedRoute>} />
             <Route path="/planos/:id/editar" element={<ProtectedRoute><PlanoForm /></ProtectedRoute>} />
+            <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

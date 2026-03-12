@@ -37,7 +37,6 @@ const Login: React.FC = () => {
       <Card className="w-full max-w-md shadow-sage">
         <CardHeader className="text-center space-y-2">
           <img src="/logo.png" alt="SAGE Logo" className="mx-auto mb-4 h-28 object-contain" />
-          <CardTitle className="text-2xl font-bold">SAGE</CardTitle>
           <CardDescription>
             Sistema de Registro de Planos de Aula Mensais— EEMTI Filgueiras Lima 2026
           </CardDescription>

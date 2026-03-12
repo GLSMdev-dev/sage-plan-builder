@@ -7,14 +7,22 @@ export const MOCK_USERS: (User & { senha: string })[] = [
     id: '1',
     nome: 'Maria Silva',
     email: 'professor@sage.com',
+    cpf: '111.111.111-11',
     perfil: 'professor',
+    status: 'ativo',
+    dataCadastro: '2025-01-10T08:00:00Z',
+    disciplinasLecionadas: ['1', '4'], // Matemática, História
     senha: '123456',
   },
   {
     id: '2',
     nome: 'Carlos Oliveira',
     email: 'professor2@sage.com',
+    cpf: '222.222.222-22',
     perfil: 'professor',
+    status: 'ativo',
+    dataCadastro: '2025-02-15T09:30:00Z',
+    disciplinasLecionadas: ['3'], // Ciências
     senha: '123456',
   },
   {
@@ -22,8 +30,24 @@ export const MOCK_USERS: (User & { senha: string })[] = [
     nome: 'Ana Costa',
     email: 'gestor@sage.com',
     perfil: 'gestor',
+    status: 'ativo',
+    dataCadastro: '2025-01-01T07:00:00Z',
     senha: '123456',
   },
+];
+
+export interface Disciplina {
+  id: string;
+  nome: string;
+  cargaHoraria: number;
+}
+
+export const MOCK_DISCIPLINAS: Disciplina[] = [
+  { id: '1', nome: 'Matemática', cargaHoraria: 5 },
+  { id: '2', nome: 'Português', cargaHoraria: 5 },
+  { id: '3', nome: 'Ciências', cargaHoraria: 3 },
+  { id: '4', nome: 'História', cargaHoraria: 2 },
+  { id: '5', nome: 'Geografia', cargaHoraria: 2 },
 ];
 
 // Planos mockados

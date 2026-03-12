@@ -9,7 +9,11 @@ export interface User {
   id: string;
   nome: string;
   email: string;
+  cpf?: string;
   perfil: 'professor' | 'gestor';
+  status?: 'ativo' | 'inativo';
+  dataCadastro?: string;
+  disciplinasLecionadas?: string[]; // Arrays de IDs das disciplinas
 }
 
 export interface AuthResponse {

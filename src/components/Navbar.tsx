@@ -22,8 +22,7 @@ const Navbar: React.FC = () => {
         >
           <img src="/logo.png" alt="SAGE Logo" className="h-10 object-contain" />
           <div>
-            <h1 className="text-lg font-semibold leading-tight">SAGE</h1>
-            <p className="text-[11px] text-muted-foreground leading-tight">EEMTI Filgueiras Lima</p>
+            <p className="text-sm font-medium leading-tight text-muted-foreground">EEMTI Filgueiras Lima</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
