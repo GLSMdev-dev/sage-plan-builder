@@ -20,9 +20,7 @@ const Navbar: React.FC = () => {
           className="flex items-center gap-3 cursor-pointer"
           onClick={() => navigate('/dashboard')}
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-            <span className="text-sm font-bold text-primary-foreground">S</span>
-          </div>
+          <img src="/logo.png" alt="SAGE Logo" className="h-10 object-contain" />
           <div>
             <h1 className="text-lg font-semibold leading-tight">SAGE</h1>
             <p className="text-[11px] text-muted-foreground leading-tight">EEMTI Filgueiras Lima</p>

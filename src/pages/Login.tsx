@@ -36,9 +36,7 @@ const Login: React.FC = () => {
     <div className="flex min-h-screen items-center justify-center bg-sage-gradient px-4">
       <Card className="w-full max-w-md shadow-sage">
         <CardHeader className="text-center space-y-2">
-          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-xl bg-primary">
-            <span className="text-2xl font-bold text-primary-foreground">S</span>
-          </div>
+          <img src="/logo.png" alt="SAGE Logo" className="mx-auto mb-4 h-28 object-contain" />
           <CardTitle className="text-2xl font-bold">SAGE</CardTitle>
           <CardDescription>
             Sistema de Planos de Aula — EEMTI Filgueiras Lima
