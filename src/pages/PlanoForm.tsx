@@ -14,9 +14,7 @@ import { Plus, Trash2, Save, Check, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 const TURMAS = [
-  '1º Ano', '2º Ano', '3º Ano', '4º Ano', '5º Ano',
-  '6º Ano', '7º Ano', '8º Ano', '9º Ano',
-  '1º EM', '2º EM', '3º EM',
+  '1ª Série', '2ª Série', '3ª Série'
 ];
 
 const MESES = [
