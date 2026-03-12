@@ -104,5 +104,14 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .bg-sage-gradient {
+    background: var(--sage-gradient);
+  }
+
+  .shadow-sage {
+    box-shadow: var(--shadow-sage);
   }
 }
