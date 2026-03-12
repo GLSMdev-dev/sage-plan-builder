@@ -7,26 +7,36 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
 
-const Login: React.FC = () => {
+const Registro: React.FC = () => {
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !senha.trim()) {
+    if (!nome.trim() || !email.trim() || !senha.trim()) {
       toast.error('Preencha todos os campos.');
+      return;
+    }
+    if (senha !== confirmarSenha) {
+      toast.error('As senhas não conferem.');
+      return;
+    }
+    if (senha.length < 6) {
+      toast.error('A senha deve ter no mínimo 6 caracteres.');
       return;
     }
     setIsLoading(true);
     try {
-      await login({ email, senha });
-      toast.success('Login realizado com sucesso!');
+      await register({ nome, email, senha });
+      toast.success('Conta criada com sucesso!');
       navigate('/dashboard');
     } catch {
-      toast.error('Credenciais inválidas. Tente novamente.');
+      toast.error('Erro ao criar conta. Email pode já estar em uso.');
     } finally {
       setIsLoading(false);
     }
@@ -39,13 +49,25 @@ const Login: React.FC = () => {
           <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-xl bg-primary">
             <span className="text-2xl font-bold text-primary-foreground">S</span>
           </div>
-          <CardTitle className="text-2xl font-bold">SAGE</CardTitle>
+          <CardTitle className="text-2xl font-bold">Cadastro de Professor</CardTitle>
           <CardDescription>
-            Sistema de Planos de Aula — EEMTI Filgueiras Lima
+            Crie sua conta para acessar o SAGE
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="nome">Nome completo</Label>
+              <Input
+                id="nome"
+                type="text"
+                placeholder="Seu nome completo"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+                maxLength={100}
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -55,6 +77,7 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                maxLength={255}
               />
             </div>
             <div className="space-y-2">
@@ -62,26 +85,34 @@ const Login: React.FC = () => {
               <Input
                 id="senha"
                 type="password"
-                placeholder="••••••••"
+                placeholder="Mínimo 6 caracteres"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
+                required
+                minLength={6}
+                maxLength={100}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmar-senha">Confirmar senha</Label>
+              <Input
+                id="confirmar-senha"
+                type="password"
+                placeholder="Repita a senha"
+                value={confirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
                 required
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Entrando...' : 'Entrar'}
+              {isLoading ? 'Criando conta...' : 'Criar conta'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Não tem conta?{' '}
-            <Link to="/registro" className="text-primary hover:underline font-medium">
-              Cadastre-se
+            Já tem conta?{' '}
+            <Link to="/login" className="text-primary hover:underline font-medium">
+              Faça login
             </Link>
-          </div>
-          <div className="mt-4 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-            <p className="font-medium mb-1">Contas de teste:</p>
-            <p>Professor: professor@sage.com / 123456</p>
-            <p>Gestor: gestor@sage.com / 123456</p>
           </div>
         </CardContent>
       </Card>
@@ -89,4 +120,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Registro;

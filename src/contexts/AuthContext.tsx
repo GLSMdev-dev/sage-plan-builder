@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { authService, User, LoginCredentials } from '@/services/authService';
+import { User, LoginCredentials } from '@/services/authService';
+import { mockAuthService } from '@/services/mockServices';
 
 interface AuthContextType {
   usuario: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
+  register: (data: { nome: string; email: string; senha: string }) => Promise<void>;
   logout: () => void;
 }
 
@@ -16,34 +18,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = authService.getStoredUser();
-    if (storedUser && authService.getStoredToken()) {
-      setUsuario(storedUser);
+    const storedUser = localStorage.getItem('sage_user');
+    const storedToken = localStorage.getItem('sage_token');
+    if (storedUser && storedToken) {
+      setUsuario(JSON.parse(storedUser));
     }
     setIsLoading(false);
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
-    const { token, usuario: user } = await authService.login(credentials);
+    const { token, usuario: user } = await mockAuthService.login(credentials);
+    localStorage.setItem('sage_token', token);
+    localStorage.setItem('sage_user', JSON.stringify(user));
+    setUsuario(user);
+  }, []);
+
+  const register = useCallback(async (data: { nome: string; email: string; senha: string }) => {
+    const { token, usuario: user } = await mockAuthService.register(data);
     localStorage.setItem('sage_token', token);
     localStorage.setItem('sage_user', JSON.stringify(user));
     setUsuario(user);
   }, []);
 
   const logout = useCallback(() => {
-    authService.logout();
+    localStorage.removeItem('sage_token');
+    localStorage.removeItem('sage_user');
     setUsuario(null);
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{
-        usuario,
-        isAuthenticated: !!usuario,
-        isLoading,
-        login,
-        logout,
-      }}
+      value={{ usuario, isAuthenticated: !!usuario, isLoading, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>
@@ -52,8 +57,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
-  }
+  if (!context) throw new Error('useAuth deve ser usado dentro de um AuthProvider');
   return context;
 };
