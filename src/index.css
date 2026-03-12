@@ -17,8 +17,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 152 60% 36%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -34,9 +34,12 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 152 60% 36%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    --sage-gradient: linear-gradient(135deg, hsl(152 60% 36%), hsl(170 50% 45%));
+    --shadow-sage: 0 8px 32px -8px hsl(152 60% 36% / 0.2);
 
     --sidebar-background: 0 0% 98%;
 
@@ -101,5 +104,14 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .bg-sage-gradient {
+    background: var(--sage-gradient);
+  }
+
+  .shadow-sage {
+    box-shadow: var(--shadow-sage);
   }
 }
