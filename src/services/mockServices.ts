@@ -30,7 +30,7 @@ export const mockAuthService = {
     };
   },
 
-  register: async (data: { nome: string; email: string; senha: string }): Promise<AuthResponse> => {
+  register: async (data: { nome: string; email: string; senha: string; cpf?: string }): Promise<AuthResponse> => {
     await delay(600);
     const exists = usersDb.find(u => u.email === data.email);
     if (exists) {
@@ -62,6 +62,15 @@ export const mockGestorService = {
   },
   salvarProfessor: async (prof: Partial<User & { senha?: string }>): Promise<User> => {
     await delay(400);
+    // Validação de unicidade
+    const emailExist = usersDb.find(u => u.email === prof.email && u.id !== prof.id);
+    if (emailExist) throw new Error('E-mail já está em uso por outro usuário.');
+    
+    if (prof.cpf) {
+      const cpfExist = usersDb.find(u => u.cpf === prof.cpf && u.id !== prof.id);
+      if (cpfExist) throw new Error('CPF já cadastrado.');
+    }
+
     if (prof.id) {
       const idx = usersDb.findIndex(u => u.id === prof.id);
       if (idx > -1) {
@@ -102,6 +111,11 @@ export const mockGestorService = {
   },
   salvarDisciplina: async (disc: Partial<Disciplina>): Promise<Disciplina> => {
     await delay(400);
+    if (disc.codigo) {
+      const codigoExist = disciplinasDb.find(d => d.codigo === disc.codigo && d.id !== disc.id);
+      if (codigoExist) throw new Error('Código já cadastrado em outra disciplina.');
+    }
+
     if (disc.id) {
       const idx = disciplinasDb.findIndex(d => d.id === disc.id);
       if (idx > -1) {
@@ -112,14 +126,29 @@ export const mockGestorService = {
     const nova: Disciplina = {
       id: String(Date.now()),
       nome: disc.nome || '',
+      codigo: disc.codigo || '',
+      cor: disc.cor || '#3b82f6',
+      serie: disc.serie || '1ª Série',
       cargaHoraria: disc.cargaHoraria || 0,
+      status: disc.status || 'ativa',
     };
     disciplinasDb.push(nova);
     return nova;
   },
   excluirDisciplina: async (id: string): Promise<void> => {
     await delay(300);
-    disciplinasDb = disciplinasDb.filter(d => d.id !== id);
+    const hasPlans = planosDb.some(p => p.disciplina === disciplinasDb.find(d => d.id === id)?.nome);
+    const hasProfs = usersDb.some(u => u.disciplinasLecionadas?.includes(id));
+    
+    if (hasPlans || hasProfs) {
+      // Exclusão lógica
+      const idx = disciplinasDb.findIndex(d => d.id === id);
+      if (idx > -1) disciplinasDb[idx].status = 'inativa';
+      throw new Error('Disciplina inativada (já possui vínculos de planos ou professores).');
+    } else {
+      // Exclusão física
+      disciplinasDb = disciplinasDb.filter(d => d.id !== id);
+    }
   },
 };
 

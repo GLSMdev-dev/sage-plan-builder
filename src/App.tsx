@@ -4,15 +4,21 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import DashboardGestor from "./pages/DashboardGestor";
+import DashboardProfessor from "./pages/DashboardProfessor";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
-import DashboardProfessor from "./pages/DashboardProfessor";
-import DashboardGestor from "./pages/DashboardGestor";
 import PlanoForm from "./pages/PlanoForm";
 import PlanoView from "./pages/PlanoView";
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
+
+const ProtectedRoute = ({ children, requireRole }: { children: React.ReactNode, requireRole?: 'professor' | 'gestor' }) => {
+  const { isAuthenticated, usuario } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (requireRole && usuario?.perfil !== requireRole) return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
+};
 
 const queryClient = new QueryClient();
 
@@ -37,7 +43,7 @@ const App = () => (
             <Route path="/planos/novo" element={<ProtectedRoute><PlanoForm /></ProtectedRoute>} />
             <Route path="/planos/:id" element={<ProtectedRoute><PlanoView /></ProtectedRoute>} />
             <Route path="/planos/:id/editar" element={<ProtectedRoute><PlanoForm /></ProtectedRoute>} />
-            <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
+            <Route path="/configuracoes" element={<ProtectedRoute requireRole="gestor"><Configuracoes /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

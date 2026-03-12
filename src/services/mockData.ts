@@ -39,15 +39,21 @@ export const MOCK_USERS: (User & { senha: string })[] = [
 export interface Disciplina {
   id: string;
   nome: string;
+  codigo?: string;
+  cor?: string;
+  serie: string;
   cargaHoraria: number;
+  status: 'ativa' | 'inativa';
 }
 
 export const MOCK_DISCIPLINAS: Disciplina[] = [
-  { id: '1', nome: 'Matemática', cargaHoraria: 5 },
-  { id: '2', nome: 'Português', cargaHoraria: 5 },
-  { id: '3', nome: 'Ciências', cargaHoraria: 3 },
-  { id: '4', nome: 'História', cargaHoraria: 2 },
-  { id: '5', nome: 'Geografia', cargaHoraria: 2 },
+  { id: '1', nome: 'Matemática', codigo: 'MAT01', cor: '#3b82f6', serie: '1ª Série', cargaHoraria: 5, status: 'ativa' },
+  { id: '1b', nome: 'Matemática', codigo: 'MAT02', cor: '#3b82f6', serie: '2ª Série', cargaHoraria: 4, status: 'ativa' },
+  { id: '2', nome: 'Português', codigo: 'POR01', cor: '#ef4444', serie: '1ª Série', cargaHoraria: 5, status: 'ativa' },
+  { id: '3', nome: 'Ciências', codigo: 'CIE03', cor: '#22c55e', serie: '3ª Série', cargaHoraria: 3, status: 'ativa' },
+  { id: '4', nome: 'História', codigo: 'HIS01', cor: '#eab308', serie: '1ª Série', cargaHoraria: 2, status: 'ativa' },
+  { id: '4b', nome: 'História', codigo: 'HIS02', cor: '#eab308', serie: '2ª Série', cargaHoraria: 2, status: 'ativa' },
+  { id: '5', nome: 'Geografia', codigo: 'GEO02', cor: '#f97316', serie: '2ª Série', cargaHoraria: 2, status: 'ativa' },
 ];
 
 // Planos mockados

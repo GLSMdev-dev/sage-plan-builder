@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockPlanoService } from '@/services/mockServices';
+import { mockPlanoService, mockGestorService } from '@/services/mockServices';
 import { PlanoAula } from '@/services/planoService';
+import { Disciplina } from '@/services/mockData';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,6 +41,7 @@ const PlanoForm: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [minhasDisciplinas, setMinhasDisciplinas] = useState<Disciplina[]>([]);
   const [disciplina, setDisciplina] = useState('');
   const [turma, setTurma] = useState('');
   const [mes, setMes] = useState('');
@@ -51,6 +53,15 @@ const PlanoForm: React.FC = () => {
     { numero: 1, metodologia: '', recursos: '' },
   ]);
   const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+    mockGestorService.listarDisciplinas().then(todas => {
+      if (usuario?.disciplinasLecionadas) {
+        const dProf = todas.filter(d => usuario.disciplinasLecionadas?.includes(d.id));
+        setMinhasDisciplinas(dProf);
+      }
+    });
+  }, [usuario]);
 
   // Carregar plano para edição
   useEffect(() => {
@@ -236,13 +247,17 @@ const PlanoForm: React.FC = () => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="disciplina">Disciplina *</Label>
-              <Input
-                id="disciplina"
-                placeholder="Ex: Matemática"
-                value={disciplina}
-                onChange={e => { setDisciplina(e.target.value); markChanged(); }}
-                maxLength={100}
-              />
+              <Select value={disciplina} onValueChange={v => { setDisciplina(v); markChanged(); }}>
+                <SelectTrigger><SelectValue placeholder={minhasDisciplinas.length ? "Selecione a Disciplina" : "Nenhuma disciplina atribuída"} /></SelectTrigger>
+                <SelectContent>
+                  {minhasDisciplinas.map(d => (
+                    <SelectItem key={d.id} value={d.nome}>{d.nome} - {d.cargaHoraria} aulas/sem</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">
+                A disciplina precisará ser atribuída a você pelo Gestor na tela de Configurações, caso não apareça nesta lista.
+              </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
