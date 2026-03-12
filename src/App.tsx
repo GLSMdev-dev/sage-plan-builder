@@ -3,13 +3,23 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Registro from "./pages/Registro";
+import DashboardProfessor from "./pages/DashboardProfessor";
+import DashboardGestor from "./pages/DashboardGestor";
+import PlanoForm from "./pages/PlanoForm";
+import PlanoView from "./pages/PlanoView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const DashboardRouter = () => {
+  const { usuario } = useAuth();
+  if (usuario?.perfil === 'gestor') return <DashboardGestor />;
+  return <DashboardProfessor />;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -21,15 +31,11 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            {/* Futuras rotas protegidas */}
+            <Route path="/registro" element={<Registro />} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardRouter /></ProtectedRoute>} />
+            <Route path="/planos/novo" element={<ProtectedRoute><PlanoForm /></ProtectedRoute>} />
+            <Route path="/planos/:id" element={<ProtectedRoute><PlanoView /></ProtectedRoute>} />
+            <Route path="/planos/:id/editar" element={<ProtectedRoute><PlanoForm /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
