@@ -21,8 +21,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedToken = localStorage.getItem('sage_token');
     if (storedUser && storedToken) {
       setUsuario(JSON.parse(storedUser));
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    // Try to exchange an active Google (Replit Auth) session for a SAGE token
+    fetch('/api/auth/google-profile', { credentials: 'include' })
+      .then(async (res) => {
+        if (res.ok) {
+          const { token, usuario: user } = await res.json();
+          localStorage.setItem('sage_token', token);
+          localStorage.setItem('sage_user', JSON.stringify(user));
+          setUsuario(user);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
@@ -43,6 +57,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('sage_token');
     localStorage.removeItem('sage_user');
     setUsuario(null);
+    // Also clear the Replit Auth session
+    window.location.href = '/api/logout';
   }, []);
 
   return (

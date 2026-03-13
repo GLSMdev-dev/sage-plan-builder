@@ -1,4 +1,5 @@
 import { pgTable, serial, varchar, text, integer, timestamp, pgEnum } from 'drizzle-orm/pg-core';
+export * from './models/auth';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
