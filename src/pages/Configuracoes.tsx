@@ -341,7 +341,6 @@ export default function Configuracoes() {
                     v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
                     setProfEditando({ ...profEditando, cpf: v })
                   }} 
-                  disabled={!!profEditando?.id}
                 />
               </div>
               {!profEditando?.id && (
