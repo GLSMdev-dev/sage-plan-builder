@@ -14,343 +14,522 @@ export interface Disciplina {
 // Usuários mockados
 export const MOCK_USERS: (User & { senha?: string })[] = [
   {
-    id: 'gestor',
-    nome: 'Gestor Sistema',
-    email: 'gestor@sage.com',
+    id: 'gestor_1',
+    nome: 'DANIEL DE ARAUJO NUNES',
+    email: 'daniel.nunes@prof.ce.gov.br',
+    cpf: '045.795.333-05',
     perfil: 'gestor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    senha: '123',
+    senha: '045795'
+  },
+  {
+    id: 'gestor_2',
+    nome: 'GUILHERME LUIS DOS SANTOS MOREIRA',
+    email: 'guilherme.moreira@prof.ce.gov.br',
+    cpf: '107.116.344-24',
+    perfil: 'gestor',
+    status: 'ativo',
+    dataCadastro: '2026-01-01T08:00:00Z',
+    senha: '107116'
+  },
+  {
+    id: 'gestor_3',
+    nome: 'ROGERIO GOMES DA SILVA',
+    email: 'rogerio.rgsilva@prof.ce.gov.br',
+    cpf: '022.813.973-27',
+    perfil: 'gestor',
+    status: 'ativo',
+    dataCadastro: '2026-01-01T08:00:00Z',
+    senha: '022813'
   },
   {
     id: 'p_100',
     nome: 'AMANDA DE SENA GUSMAO',
-    email: 'amanda@sage.com',
-    cpf: '100.111.111-11',
+    email: 'amanda.gusmao@prof.ce.gov.br',
+    cpf: '075.733.284-60',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_1', 'd_2', 'd_3', 'd_4'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_1',
+      'd_2',
+      'd_3',
+      'd_4'
+    ],
+    senha: '075733'
   },
   {
     id: 'p_101',
     nome: 'ANA CRISTINA DE SOUZA LIMA',
-    email: 'ana@sage.com',
-    cpf: '101.111.111-11',
+    email: 'ana.lima41@prof.ce.gov.br',
+    cpf: '008.548.263-35',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_5', 'd_6', 'd_7', 'd_8'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_5',
+      'd_6',
+      'd_7',
+      'd_8'
+    ],
+    senha: '008548'
   },
   {
     id: 'p_102',
     nome: 'ANDREIA FELIZARDO LIMA',
-    email: 'andreia@sage.com',
-    cpf: '102.111.111-11',
+    email: 'andreia.lima11@prof.ce.gov.br',
+    cpf: '055.747.663-10',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_9', 'd_10', 'd_11'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_9',
+      'd_10',
+      'd_11'
+    ],
+    senha: '055747'
   },
   {
     id: 'p_103',
     nome: 'BRENDA SILVA MARQUES VIEIRA',
-    email: 'brenda@sage.com',
-    cpf: '103.111.111-11',
+    email: 'brenda.vieira@prof.ce.gov.br',
+    cpf: '074.001.373-44',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_9', 'd_12', 'd_13', 'd_14', 'd_15'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_9',
+      'd_12',
+      'd_13',
+      'd_14',
+      'd_15'
+    ],
+    senha: '074001'
   },
   {
     id: 'p_104',
     nome: 'DIEGO CAVALCANTE DE OLIVEIRA',
-    email: 'diego@sage.com',
-    cpf: '104.111.111-11',
+    email: 'diego.oliveira2@prof.ce.gov.br',
+    cpf: '034.839.493-48',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_16', 'd_17'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_16',
+      'd_17'
+    ],
+    senha: '034839'
   },
   {
     id: 'p_105',
     nome: 'EMANOEL MIRANDA DE OLIVEIRA',
-    email: 'emanoel@sage.com',
-    cpf: '105.111.111-11',
+    email: 'emanoel.oliveira@prof.ce.gov.br',
+    cpf: '813.459.683-53',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_18', 'd_19'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_18',
+      'd_19'
+    ],
+    senha: '813459'
   },
   {
     id: 'p_106',
     nome: 'ERIK WILLER ALVES RODRIGUES',
-    email: 'erik@sage.com',
-    cpf: '106.111.111-11',
+    email: 'erik.rodrigues@prof.ce.gov.br',
+    cpf: '053.401.543-35',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_20', 'd_21', 'd_22', 'd_23', 'd_7'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_20',
+      'd_21',
+      'd_22',
+      'd_23',
+      'd_7'
+    ],
+    senha: '053401'
   },
   {
     id: 'p_107',
     nome: 'FRANCISCA TEIXEIRA RODRIGUES',
-    email: 'francisca@sage.com',
-    cpf: '107.111.111-11',
+    email: 'francisca.rodrigues10@prof.ce.gov.br',
+    cpf: '022.229.113-38',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_24', 'd_25', 'd_26', 'd_27', 'd_28'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_24',
+      'd_25',
+      'd_26',
+      'd_27',
+      'd_28'
+    ],
+    senha: '022229'
   },
   {
     id: 'p_108',
     nome: 'FRANCISCO ALFREDO NICOLAU FILHO',
-    email: 'francisco@sage.com',
-    cpf: '108.111.111-11',
+    email: 'francisco.filho3@prof.ce.gov.br',
+    cpf: '369.432.663-49',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_29', 'd_30', 'd_31', 'd_32', 'd_33'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_29',
+      'd_30',
+      'd_31',
+      'd_32',
+      'd_33'
+    ],
+    senha: '369432'
   },
   {
     id: 'p_109',
     nome: 'HELIO GOMES E SILVA',
-    email: 'helio@sage.com',
-    cpf: '109.111.111-11',
+    email: 'helio.silva1@prof.ce.gov.br',
+    cpf: '014.340.963-86',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_34', 'd_25', 'd_35', 'd_36', 'd_37', 'd_38', 'd_39'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_34',
+      'd_25',
+      'd_35',
+      'd_36',
+      'd_37',
+      'd_38',
+      'd_39'
+    ],
+    senha: '014340'
   },
   {
     id: 'p_110',
     nome: 'IASMIN CARMO RODRIGUES',
-    email: 'iasmin@sage.com',
-    cpf: '110.111.111-11',
+    email: 'iasmim.rodrigues@prof.ce.gov.br',
+    cpf: '600.884.713-06',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_40'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_40'
+    ],
+    senha: '600884'
   },
   {
     id: 'p_111',
     nome: 'ITAERCIO PEREIRA DE LIMA',
-    email: 'itaercio@sage.com',
-    cpf: '111.111.111-11',
+    email: 'itaercio.lima@prof.ce.gov.br',
+    cpf: '064.772.653-03',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_41', 'd_42', 'd_7', 'd_38', 'd_39', 'd_2', 'd_43'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_41',
+      'd_42',
+      'd_7',
+      'd_38',
+      'd_39',
+      'd_2',
+      'd_43'
+    ],
+    senha: '064772'
   },
   {
     id: 'p_112',
     nome: 'IVANEIDE ALVES DE ARAUJO',
-    email: 'ivaneide@sage.com',
-    cpf: '112.111.111-11',
+    email: 'ivaneide.araujo@prof.ce.gov.br',
+    cpf: '021.543.183-98',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_44', 'd_45', 'd_46', 'd_47', 'd_9'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_44',
+      'd_45',
+      'd_46',
+      'd_47',
+      'd_9'
+    ],
+    senha: '021543'
   },
   {
     id: 'p_113',
     nome: 'JOÃO IGOR GOMES DE SOUZA',
-    email: 'joao@sage.com',
-    cpf: '113.111.111-11',
+    email: 'joao.souza9@prof.ce.gov.br',
+    cpf: '062.931.163-30',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_48', 'd_49', 'd_50', 'd_23'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_48',
+      'd_49',
+      'd_50',
+      'd_23'
+    ],
+    senha: '062931'
   },
   {
     id: 'p_114',
     nome: 'TAMIRES SANTIAGO DOS SANTOS FERNANDES',
-    email: 'tamires@sage.com',
-    cpf: '114.111.111-11',
+    email: 'tamires.fernandes@prof.ce.gov.br',
+    cpf: '046.187.023-11',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_14', 'd_15', 'd_66', 'd_13'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_14',
+      'd_15',
+      'd_66',
+      'd_13'
+    ],
+    senha: '046187'
   },
   {
     id: 'p_115',
     nome: 'LUCICLEIDE CARLOS TEIXEIRA',
-    email: 'lucicleide@sage.com',
-    cpf: '115.111.111-11',
+    email: 'lucicleide.teixeira@prof.ce.gov.br',
+    cpf: '515.062.204-44',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_51', 'd_52', 'd_53'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_51',
+      'd_52',
+      'd_53'
+    ],
+    senha: '515062'
   },
   {
     id: 'p_116',
     nome: 'LUIZ GOMES DE OLIVEIRA NETO',
-    email: 'luiz@sage.com',
-    cpf: '116.111.111-11',
+    email: 'luiz.neto3@prof.ce.gov.br',
+    cpf: '037.534.513-20',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_7', 'd_29', 'd_25', 'd_54', 'd_55', 'd_42'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_7',
+      'd_29',
+      'd_25',
+      'd_54',
+      'd_55',
+      'd_42'
+    ],
+    senha: '037534'
   },
   {
     id: 'p_117',
     nome: 'MARCOS ANDRÉ QUEIROZ MACHADO',
-    email: 'marcos@sage.com',
-    cpf: '117.111.111-11',
+    email: 'marcos.machado1@prof.ce.gov.br',
+    cpf: '071.695.593-82',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_42', 'd_38', 'd_56', 'd_39'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_42',
+      'd_38',
+      'd_56',
+      'd_39'
+    ],
+    senha: '071695'
   },
   {
     id: 'p_118',
     nome: 'MARCOS JOSE BENTO',
-    email: 'marcos@sage.com',
-    cpf: '118.111.111-11',
+    email: 'marcos.bento@prof.ce.gov.br',
+    cpf: '479.431.303-91',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_26', 'd_57', 'd_58', 'd_27', 'd_59', 'd_60', 'd_61', 'd_62'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_26',
+      'd_57',
+      'd_58',
+      'd_27',
+      'd_59',
+      'd_60',
+      'd_61',
+      'd_62'
+    ],
+    senha: '479431'
   },
   {
     id: 'p_119',
     nome: 'MARIA JACKELINE PEREIRA DE LIMA',
-    email: 'maria@sage.com',
-    cpf: '119.111.111-11',
+    email: 'maria.lima200@prof.ce.gov.br',
+    cpf: '077.910.523-00',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_63', 'd_64', 'd_23', 'd_65'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_63',
+      'd_64',
+      'd_23',
+      'd_65'
+    ],
+    senha: '077910'
   },
   {
     id: 'p_120',
     nome: 'MIKAEL FERREIRA DE LIMA',
-    email: 'mikael@sage.com',
-    cpf: '120.111.111-11',
+    email: 'mikael.lima@prof.ce.gov.br',
+    cpf: '080.545.943-05',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_67', 'd_68', 'd_69'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_67',
+      'd_68',
+      'd_69'
+    ],
+    senha: '080545'
   },
   {
     id: 'p_121',
     nome: 'MORGANIA ALVES DE AMORIM',
-    email: 'morgania@sage.com',
-    cpf: '121.111.111-11',
+    email: 'morgania.amorim@prof.ce.gov.br',
+    cpf: '429.777.033-49',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_70', 'd_71'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_70',
+      'd_71'
+    ],
+    senha: '429777'
   },
   {
     id: 'p_122',
     nome: 'NACIZO CANDIDO NETO',
-    email: 'nacizo@sage.com',
-    cpf: '122.111.111-11',
+    email: 'nacizo.neto@prof.ce.gov.br',
+    cpf: '044.681.613-29',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_72', 'd_45', 'd_73', 'd_47'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_72',
+      'd_45',
+      'd_73',
+      'd_47'
+    ],
+    senha: '044681'
   },
   {
     id: 'p_123',
     nome: 'NÁJILA RAQUEL MOREIRA DA SILVA',
-    email: 'najila@sage.com',
-    cpf: '123.111.111-11',
+    email: 'najila.silva@prof.ce.gov.br',
+    cpf: '033.842.803-85',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_74', 'd_46'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_74',
+      'd_46'
+    ],
+    senha: '033842'
   },
   {
     id: 'p_124',
     nome: 'PAULO VICTOR ARAUJO RICARTE',
-    email: 'paulo@sage.com',
-    cpf: '124.111.111-11',
+    email: 'paulo.araujo5@prof.ce.gov.br',
+    cpf: '032.354.363-40',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_34', 'd_25', 'd_75', 'd_76', 'd_77'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_34',
+      'd_25',
+      'd_75',
+      'd_76',
+      'd_77'
+    ],
+    senha: '032354'
   },
   {
     id: 'p_125',
     nome: 'REGILANIA OLIVEIRA DO NASCIMENTO',
-    email: 'regilania@sage.com',
-    cpf: '125.111.111-11',
+    email: 'regilania.nascimento@prof.ce.gov.br',
+    cpf: '062.935.073-63',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_25', 'd_44', 'd_45', 'd_47', 'd_78'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_25',
+      'd_44',
+      'd_45',
+      'd_47',
+      'd_78'
+    ],
+    senha: '062935'
   },
   {
     id: 'p_126',
     nome: 'RENATO SIQUEIRA',
-    email: 'renato@sage.com',
-    cpf: '126.111.111-11',
+    email: 'renato.siqueira@prof.ce.gov.br',
+    cpf: '014.025.933-33',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_79', 'd_80'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_79',
+      'd_80'
+    ],
+    senha: '014025'
   },
   {
     id: 'p_127',
     nome: 'SILAS MICAEL DO NASCIMENTO GOMES',
-    email: 'silas@sage.com',
-    cpf: '127.111.111-11',
+    email: 'silas.gomes@prof.ce.gov.br',
+    cpf: '035.449.533-07',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_25', 'd_51', 'd_81', 'd_82', 'd_80', 'd_83'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_25',
+      'd_51',
+      'd_81',
+      'd_82',
+      'd_80',
+      'd_83'
+    ],
+    senha: '035449'
   },
   {
     id: 'p_128',
     nome: 'THAIANA MAGNA MOURA SALDANHA',
-    email: 'thaiana@sage.com',
-    cpf: '128.111.111-11',
+    email: 'thaiana.saldanha@prof.ce.gov.br',
+    cpf: '063.247.803-92',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_51', 'd_83'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_51',
+      'd_83'
+    ],
+    senha: '063247'
   },
   {
     id: 'p_129',
     nome: 'TAIS NUNES LEMOS',
-    email: 'tais@sage.com',
-    cpf: '129.111.111-11',
+    email: 'tais.lemos@prof.ce.gov.br',
+    cpf: '610.912.343-96',
     perfil: 'professor',
     status: 'ativo',
     dataCadastro: '2026-01-01T08:00:00Z',
-    disciplinasLecionadas: ['d_84', 'd_85', 'd_86', 'd_87', 'd_13', 'd_14', 'd_15', 'd_9', 'd_27'],
-    senha: 'sage',
+    disciplinasLecionadas: [
+      'd_84',
+      'd_85',
+      'd_86',
+      'd_87',
+      'd_13',
+      'd_14',
+      'd_15',
+      'd_9',
+      'd_27'
+    ],
+    senha: '610912'
   }
 ];
 
