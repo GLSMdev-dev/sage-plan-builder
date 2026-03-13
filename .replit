@@ -35,5 +35,13 @@ args = "npx concurrently \"npx tsx server/index.ts\" \"vite\""
 waitForPort = 5000
 
 [[ports]]
+localPort = 3001
+externalPort = 3001
+
+[[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3002
