@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockGestorService } from '@/services/mockServices';
 import { User } from '@/services/authService';
-import { Disciplina } from '@/services/mockData';
+import { gestorService, Disciplina } from '@/services/gestorService';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,8 +43,8 @@ export default function Configuracoes() {
     setIsLoading(true);
     try {
       const [profs, discs] = await Promise.all([
-        mockGestorService.listarProfessores(),
-        mockGestorService.listarDisciplinas(),
+        gestorService.listarProfessores(),
+        gestorService.listarDisciplinas(),
       ]);
       setProfessores(profs);
       setDisciplinas(discs);
@@ -64,7 +63,7 @@ export default function Configuracoes() {
       return;
     }
     try {
-      await mockGestorService.salvarProfessor(profEditando);
+      await gestorService.salvarProfessor(profEditando);
       toast.success('Professor salvo com sucesso!');
       setIsProfModalOpen(false);
       carregarDados();
@@ -77,7 +76,7 @@ export default function Configuracoes() {
     const acao = statusAtual === 'ativo' ? 'inativar' : 'reativar';
     if (!window.confirm(`Tem certeza que deseja ${acao} este professor?`)) return;
     try {
-      await mockGestorService.excluirProfessor(id);
+      await gestorService.excluirProfessor(id);
       toast.success(`Professor ${statusAtual === 'ativo' ? 'inativado' : 'reativado'} com sucesso!`);
       carregarDados();
     } catch (err: any) {
@@ -93,7 +92,7 @@ export default function Configuracoes() {
       return;
     }
     try {
-      await mockGestorService.salvarDisciplina(discEditando as Disciplina);
+      await gestorService.salvarDisciplina(discEditando);
       toast.success('Disciplina salva com sucesso!');
       setIsDiscModalOpen(false);
       carregarDados();
@@ -105,7 +104,7 @@ export default function Configuracoes() {
   const handleExcluirDisc = async (id: string) => {
     if (!window.confirm('Tem certeza que deseja inativar ou excluir esta disciplina?')) return;
     try {
-      await mockGestorService.excluirDisciplina(id);
+      await gestorService.excluirDisciplina(id);
       toast.success('Disciplina inativada/excluída!');
       carregarDados();
     } catch (err: any) {

@@ -13,7 +13,7 @@ export interface User {
   perfil: 'professor' | 'gestor';
   status?: 'ativo' | 'inativo';
   dataCadastro?: string;
-  disciplinasLecionadas?: string[]; // Arrays de IDs das disciplinas
+  disciplinasLecionadas?: string[];
 }
 
 export interface AuthResponse {
@@ -25,6 +25,11 @@ export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     const { data } = await api.post<AuthResponse>('/auth/login', credentials);
     return data;
+  },
+
+  register: async (data: { nome: string; email: string; senha: string; cpf?: string }): Promise<AuthResponse> => {
+    const { data: response } = await api.post<AuthResponse>('/auth/register', data);
+    return response;
   },
 
   logout: () => {

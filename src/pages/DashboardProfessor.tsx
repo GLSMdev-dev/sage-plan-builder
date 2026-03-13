@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { PlanoAula } from '@/services/planoService';
-import { mockPlanoService } from '@/services/mockServices';
+import { PlanoAula, planoService } from '@/services/planoService';
 import Navbar from '@/components/Navbar';
 import StatCard from '@/components/StatCard';
 import PlanoCard from '@/components/PlanoCard';
@@ -24,7 +23,7 @@ const DashboardProfessor: React.FC = () => {
 
   const carregarPlanos = async () => {
     try {
-      const data = await mockPlanoService.listar(usuario?.id);
+      const data = await planoService.listar();
       setPlanos(data);
     } catch {
       toast.error('Erro ao carregar planos.');
@@ -39,7 +38,7 @@ const DashboardProfessor: React.FC = () => {
 
   const handleExcluir = async (id: string) => {
     try {
-      await mockPlanoService.excluir(id);
+      await planoService.excluir(id);
       setPlanos(prev => prev.filter(p => p._id !== id));
       toast.success('Plano excluído com sucesso!');
     } catch {
@@ -49,7 +48,7 @@ const DashboardProfessor: React.FC = () => {
 
   const handleDuplicar = async (id: string) => {
     try {
-      const novo = await mockPlanoService.duplicar(id, usuario!.id, usuario!.nome);
+      const novo = await planoService.duplicar(id);
       setPlanos(prev => [...prev, novo]);
       toast.success('Plano duplicado como rascunho!');
     } catch {

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockPlanoService, mockGestorService } from '@/services/mockServices';
-import { PlanoAula } from '@/services/planoService';
-import { Disciplina } from '@/services/mockData';
+import { PlanoAula, planoService } from '@/services/planoService';
+import { gestorService, Disciplina } from '@/services/gestorService';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,7 +54,7 @@ const PlanoForm: React.FC = () => {
   const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
-    mockGestorService.listarDisciplinas().then(todas => {
+    gestorService.listarDisciplinas().then(todas => {
       if (usuario?.disciplinasLecionadas) {
         const dProf = todas.filter(d => usuario.disciplinasLecionadas?.includes(d.id));
         setMinhasDisciplinas(dProf);
@@ -67,7 +66,7 @@ const PlanoForm: React.FC = () => {
   useEffect(() => {
     if (isEditing) {
       setIsLoading(true);
-      mockPlanoService.buscarPorId(id).then(plano => {
+      planoService.buscarPorId(id).then(plano => {
         if (plano.professorId !== usuario?.id) {
           toast.error('Você não tem permissão para editar este plano.');
           navigate('/dashboard');
@@ -199,10 +198,10 @@ const PlanoForm: React.FC = () => {
     try {
       let saved: PlanoAula;
       if (isEditing) {
-        saved = await mockPlanoService.atualizar(id, planoData);
+        saved = await planoService.atualizar(id, planoData);
         toast.success('Plano atualizado com sucesso!');
       } else {
-        saved = await mockPlanoService.criar(planoData);
+        saved = await planoService.criar(planoData);
         localStorage.removeItem('sage_draft');
         toast.success('Plano criado com sucesso!');
       }

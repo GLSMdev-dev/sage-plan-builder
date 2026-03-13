@@ -12,7 +12,7 @@ export interface PlanoAula {
   professorNome: string;
   disciplina: string;
   turma: string;
-  mesAno: string; // formato: "2026-03"
+  mesAno: string;
   objetivos: string;
   conteudo: string;
   avaliacao: string;
@@ -45,5 +45,10 @@ export const planoService = {
 
   excluir: async (id: string): Promise<void> => {
     await api.delete(`/planos/${id}`);
+  },
+
+  duplicar: async (id: string): Promise<PlanoAula> => {
+    const { data } = await api.post<PlanoAula>(`/planos/${id}/duplicar`, {});
+    return data;
   },
 };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlanoAula } from '@/services/planoService';
-import { mockPlanoService } from '@/services/mockServices';
-import { MOCK_USERS } from '@/services/mockData';
+import { PlanoAula, planoService } from '@/services/planoService';
+import { User } from '@/services/authService';
+import { gestorService } from '@/services/gestorService';
 import Navbar from '@/components/Navbar';
 import StatCard from '@/components/StatCard';
 import PlanoCard from '@/components/PlanoCard';
@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 const DashboardGestor: React.FC = () => {
   const navigate = useNavigate();
   const [planos, setPlanos] = useState<PlanoAula[]>([]);
+  const [professores, setProfessores] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [busca, setBusca] = useState('');
   const [filtroProfessor, setFiltroProfessor] = useState('todos');
@@ -25,8 +26,12 @@ const DashboardGestor: React.FC = () => {
   useEffect(() => {
     const carregar = async () => {
       try {
-        const data = await mockPlanoService.listar();
-        setPlanos(data);
+        const [planosData, profsData] = await Promise.all([
+          planoService.listar(),
+          gestorService.listarProfessores(),
+        ]);
+        setPlanos(planosData);
+        setProfessores(profsData);
       } catch {
         toast.error('Erro ao carregar planos.');
       } finally {
@@ -41,7 +46,6 @@ const DashboardGestor: React.FC = () => {
   const planosMesAtual = planos.filter(p => p.mesAno === mesAtual).length;
   const professoresAtivos = new Set(planos.map(p => p.professorId)).size;
 
-  const professores = MOCK_USERS.filter(u => u.perfil === 'professor');
   const turmas = [...new Set(planos.map(p => p.turma))].sort();
   const meses = [...new Set(planos.map(p => p.mesAno))].sort().reverse();
 

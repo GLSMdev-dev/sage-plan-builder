@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { User, LoginCredentials } from '@/services/authService';
-import { mockAuthService } from '@/services/mockServices';
+import { User, LoginCredentials, authService } from '@/services/authService';
 
 interface AuthContextType {
   usuario: User | null;
@@ -27,14 +26,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
-    const { token, usuario: user } = await mockAuthService.login(credentials);
+    const { token, usuario: user } = await authService.login(credentials);
     localStorage.setItem('sage_token', token);
     localStorage.setItem('sage_user', JSON.stringify(user));
     setUsuario(user);
   }, []);
 
   const register = useCallback(async (data: { nome: string; email: string; senha: string }) => {
-    const { token, usuario: user } = await mockAuthService.register(data);
+    const { token, usuario: user } = await authService.register(data);
     localStorage.setItem('sage_token', token);
     localStorage.setItem('sage_user', JSON.stringify(user));
     setUsuario(user);

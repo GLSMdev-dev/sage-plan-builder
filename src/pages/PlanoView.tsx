@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { PlanoAula } from '@/services/planoService';
-import { mockPlanoService } from '@/services/mockServices';
+import { PlanoAula, planoService } from '@/services/planoService';
 import { formatMesAno, formatDate } from '@/utils/formatters';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,7 @@ const PlanoView: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    mockPlanoService.buscarPorId(id)
+    planoService.buscarPorId(id)
       .then(setPlano)
       .catch(() => {
         toast.error('Plano não encontrado.');
