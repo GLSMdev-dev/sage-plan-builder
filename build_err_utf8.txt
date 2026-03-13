@@ -1,0 +1,150 @@
+﻿
+> vite_react_shadcn_ts@0.0.0 build
+> vite build
+
+[36mvite v5.4.19 [32mbuilding for production...[36m[39m
+transforming...
+node.exe : 
+Browserslist: browsers 
+data (caniuse-lite) is 
+9 months old. Please 
+run:
+No C:\Program Files\nod
+ejs\npm.ps1:29 
+caractere:3
++   & $NODE_EXE 
+$NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (Browserslist:   
+  b...ld. Please ru    
+n::String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+  npx update-browsersli
+st-db@latest
+  Why you should do it 
+regularly: https://gith
+ub.com/browserslist/upd
+ate-db#readme
+[32mÔ£ô[39m 47 modules transformed.
+[31mx[39m Build 
+failed in 8.00s
+[31merror during 
+build:
+[31m[vite:esbuild] 
+Transform failed with 
+2 errors:
+C:/Users/Guilu/OneDrive
+/├ürea de Trabalho/COIS
+AS/codigos/ANTIGRAVITY/
+PALNOS DE AULA/sage-pla
+n-builder/src/services/
+mockData.ts:139:13: 
+ERROR: The symbol 
+"MOCK_USERS" has 
+already been declared
+C:/Users/Guilu/OneDrive
+/├ürea de Trabalho/COIS
+AS/codigos/ANTIGRAVITY/
+PALNOS DE AULA/sage-pla
+n-builder/src/services/
+mockData.ts:470:0: 
+ERROR: Expected "]" 
+but found ";"[31m
+file: [36mC:/Users/Gui
+lu/OneDrive/├ürea de Tr
+abalho/COISAS/codigos/A
+NTIGRAVITY/PALNOS DE AU
+LA/sage-plan-builder/sr
+c/services/mockData.ts:
+139:13[31m
+[33m
+[33mThe symbol 
+"MOCK_USERS" has 
+already been 
+declared[33m
+137|    },
+138|  ];
+139|  export const 
+MOCK_USERS: (User & { 
+senha?: string })[] = [
+   |               ^
+140|    {
+141|      id: 'p_100',
+
+[33mExpected "]" but 
+found ";"[33m
+468|      senha: 
+'sage',
+469|    }
+470|  ;
+   |  ^
+471|  
+472|  export const 
+MOCK_DISCIPLINAS: 
+Disciplina[] = [´╗┐
+[31m
+    at 
+failureErrorWithLog (C:
+\Users\Guilu\OneDrive\├
+ürea de Trabalho\COISAS
+\codigos\ANTIGRAVITY\PA
+LNOS DE AULA\sage-plan-
+builder\node_modules\es
+build\lib\main.js:1472:
+15)
+    at C:\Users\Guilu\O
+neDrive\├ürea de Trabal
+ho\COISAS\codigos\ANTIG
+RAVITY\PALNOS DE AULA\s
+age-plan-builder\node_m
+odules\esbuild\lib\main
+.js:755:50
+    at responseCallback
+s.<computed> (C:\Users\
+Guilu\OneDrive\├ürea 
+de Trabalho\COISAS\codi
+gos\ANTIGRAVITY\PALNOS 
+DE AULA\sage-plan-build
+er\node_modules\esbuild
+\lib\main.js:622:9)
+    at 
+handleIncomingPacket (C
+:\Users\Guilu\OneDrive\
+├ürea de Trabalho\COISA
+S\codigos\ANTIGRAVITY\P
+ALNOS DE AULA\sage-plan
+-builder\node_modules\e
+sbuild\lib\main.js:677:
+12)
+    at 
+Socket.readFromStdout (
+C:\Users\Guilu\OneDrive
+\├ürea de Trabalho\COIS
+AS\codigos\ANTIGRAVITY\
+PALNOS DE AULA\sage-pla
+n-builder\node_modules\
+esbuild\lib\main.js:600
+:7)
+    at Socket.emit 
+(node:events:518:28)
+    at addChunk (node:i
+nternal/streams/readabl
+e:561:12)
+    at readableAddChunk
+PushByteMode (node:inte
+rnal/streams/readable:5
+12:3)
+    at Readable.push (n
+ode:internal/streams/re
+adable:392:5)
+    at 
+Pipe.onStreamRead (node
+:internal/stream_base_c
+ommons:189:23)[39m

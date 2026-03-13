@@ -2,39 +2,6 @@ import { User } from '@/services/authService';
 import { PlanoAula } from '@/services/planoService';
 
 // Usuários mockados
-export const MOCK_USERS: (User & { senha: string })[] = [
-  {
-    id: '1',
-    nome: 'Maria Silva',
-    email: 'professor@sage.com',
-    cpf: '111.111.111-11',
-    perfil: 'professor',
-    status: 'ativo',
-    dataCadastro: '2025-01-10T08:00:00Z',
-    disciplinasLecionadas: ['1', '4'], // Matemática, História
-    senha: '123456',
-  },
-  {
-    id: '2',
-    nome: 'Carlos Oliveira',
-    email: 'professor2@sage.com',
-    cpf: '222.222.222-22',
-    perfil: 'professor',
-    status: 'ativo',
-    dataCadastro: '2025-02-15T09:30:00Z',
-    disciplinasLecionadas: ['3'], // Ciências
-    senha: '123456',
-  },
-  {
-    id: '3',
-    nome: 'Ana Costa',
-    email: 'gestor@sage.com',
-    perfil: 'gestor',
-    status: 'ativo',
-    dataCadastro: '2025-01-01T07:00:00Z',
-    senha: '123456',
-  },
-];
 
 export interface Disciplina {
   id: string;
@@ -46,15 +13,6 @@ export interface Disciplina {
   status: 'ativa' | 'inativa';
 }
 
-export const MOCK_DISCIPLINAS: Disciplina[] = [
-  { id: '1', nome: 'Matemática', codigo: 'MAT01', cor: '#3b82f6', serie: '1ª Série', cargaHoraria: 5, status: 'ativa' },
-  { id: '1b', nome: 'Matemática', codigo: 'MAT02', cor: '#3b82f6', serie: '2ª Série', cargaHoraria: 4, status: 'ativa' },
-  { id: '2', nome: 'Português', codigo: 'POR01', cor: '#ef4444', serie: '1ª Série', cargaHoraria: 5, status: 'ativa' },
-  { id: '3', nome: 'Ciências', codigo: 'CIE03', cor: '#22c55e', serie: '3ª Série', cargaHoraria: 3, status: 'ativa' },
-  { id: '4', nome: 'História', codigo: 'HIS01', cor: '#eab308', serie: '1ª Série', cargaHoraria: 2, status: 'ativa' },
-  { id: '4b', nome: 'História', codigo: 'HIS02', cor: '#eab308', serie: '2ª Série', cargaHoraria: 2, status: 'ativa' },
-  { id: '5', nome: 'Geografia', codigo: 'GEO02', cor: '#f97316', serie: '2ª Série', cargaHoraria: 2, status: 'ativa' },
-];
 
 // Planos mockados
 export const MOCK_PLANOS: PlanoAula[] = [
@@ -467,9 +425,8 @@ export const MOCK_USERS: (User & { senha?: string })[] = [
     disciplinasLecionadas: ['d_84', 'd_85', 'd_86', 'd_87', 'd_13', 'd_14', 'd_15', 'd_9', 'd_27'],
     senha: 'sage',
   }
-;
 
-export const MOCK_DISCIPLINAS: Disciplina[] = [﻿
+export const MOCK_DISCIPLINAS: Disciplina[] = [
   { id: 'd_1', nome: 'AEE MANH├â', serie: 'Todas', cargaHoraria: 14, status: 'ativa' },
   { id: 'd_2', nome: 'QU├ìMICA', serie: '1┬¬ S├®rie', cargaHoraria: 2, status: 'ativa' },
   { id: 'd_3', nome: 'CNT ENEM', serie: '3┬¬ S├®rie', cargaHoraria: 2, status: 'ativa' },
