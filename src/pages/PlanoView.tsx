@@ -55,7 +55,7 @@ const PlanoView: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="mx-auto max-w-4xl px-4 sm:px-6 py-6 sm:py-8">
+      <main className="mx-auto max-w-4xl px-4 sm:px-6 py-6 sm:py-8 print:px-0 print:py-0 print:max-w-none">
         {/* Ações (escondidas na impressão) */}
         <div className="flex items-center justify-between mb-6 print:hidden">
           <Button variant="ghost" onClick={() => navigate('/dashboard')}>
@@ -79,31 +79,31 @@ const PlanoView: React.FC = () => {
         </div>
 
         {/* Cabeçalho de Impressão (exclusivo para print) */}
-        <div className="hidden print:block mb-3 -mt-10 text-center">
-          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-1 h-16 object-contain" />
-          <div className="space-y-0 text-[9pt] font-semibold uppercase leading-tight">
+        <div className="hidden print:block mb-2 -mt-10 text-center">
+          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-1 h-12 object-contain" />
+          <div className="space-y-0 text-[7pt] font-semibold uppercase leading-tight">
             <p>Coordenadoria Regional de Desenvolvimento da Educação – CREDE 16</p>
             <p>Escola de Ensino Médio em Tempo Integral Filgueiras Lima – INEP: 23142804</p>
           </div>
-          <h1 className="mt-1 text-[10pt] font-bold border-y-2 border-black py-0.5">
+          <h1 className="mt-1 text-[8pt] font-bold border-y border-black py-0.5">
             PLANO DE AULA MENSAL
           </h1>
           
-          <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-0.5 text-left text-[9pt]">
-            <div className="flex gap-2">
-              <span className="font-bold">DISCIPLINA:</span>
+          <div className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-0 text-left text-[7pt]">
+            <div className="flex gap-1">
+              <span className="font-bold whitespace-nowrap">DISCIPLINA:</span>
               <span className="uppercase">{plano.disciplina}</span>
             </div>
-            <div className="flex gap-2">
-              <span className="font-bold">SÉRIE:</span>
+            <div className="flex gap-1">
+              <span className="font-bold whitespace-nowrap">SÉRIE:</span>
               <span className="uppercase">{plano.turma}</span>
             </div>
-            <div className="flex gap-2">
-              <span className="font-bold">MÊS:</span>
+            <div className="flex gap-1">
+              <span className="font-bold whitespace-nowrap">MÊS:</span>
               <span className="uppercase">{formatMesAno(plano.mesAno)}</span>
             </div>
-            <div className="flex gap-2">
-              <span className="font-bold">PROFESSOR:</span>
+            <div className="flex gap-1">
+              <span className="font-bold whitespace-nowrap">PROFESSOR:</span>
               <span className="uppercase">{plano.professorNome}</span>
             </div>
           </div>
@@ -214,7 +214,7 @@ const PlanoView: React.FC = () => {
           </div>
 
           {/* Informações Institucionais - Posicionado no rodapé da página */}
-          <div className="print:fixed print:bottom-4 print:left-0 print:right-0 pt-2 border-t border-black text-[8pt] text-center space-y-0.5 font-medium bg-white">
+          <div className="print:fixed print:bottom-1 print:left-0 print:right-0 pt-1 border-t border-black text-[8pt] text-center space-y-0.5 font-medium bg-white">
             <p>
               Rua Vereador Nelson de Sousa Alencar, sn – Veneza | Iguatu – Ceará | CEP: 63.504-356 - Fone: (88) 3581.9463
             </p>
