@@ -78,18 +78,18 @@ const PlanoView: React.FC = () => {
           </div>
         </div>
 
-        {/* Cabeçalho de Impressão (exclusivo para print) */}
-        <div className="hidden print:block mb-4 pt-4 text-center">
-          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-1 h-12 object-contain" />
-          <div className="space-y-0 text-[7pt] font-semibold uppercase leading-tight">
+        {/* Cabeçalho Institucional (Visível na tela e impressão) */}
+        <div className="mb-6 pt-4 text-center border-b pb-4 print:border-none print:pt-4">
+          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-2 h-16 object-contain" />
+          <div className="space-y-0 text-[8pt] font-semibold uppercase leading-tight text-muted-foreground print:text-black">
             <p>Coordenadoria Regional de Desenvolvimento da Educação – CREDE 16</p>
             <p>Escola de Ensino Médio em Tempo Integral Filgueiras Lima – INEP: 23142804</p>
           </div>
-          <h1 className="mt-1 text-[8pt] font-bold border-y border-black py-0.5">
+          <h1 className="mt-2 text-[10pt] font-bold border-y-2 border-black py-1 print:text-[8pt] print:py-0.5">
             PLANO DE AULA MENSAL
           </h1>
           
-          <div className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-0 text-left text-[7pt]">
+          <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-left text-sm print:text-[7pt] print:gap-y-0 print:mt-1.5">
             <div className="flex gap-1">
               <span className="font-bold whitespace-nowrap">DISCIPLINA:</span>
               <span className="uppercase">{plano.disciplina}</span>
@@ -109,30 +109,13 @@ const PlanoView: React.FC = () => {
           </div>
         </div>
 
-        {/* Cabeçalho da Tela (escondido na impressão) */}
-        <div className="mb-8 print:hidden">
-          <div className="flex items-start justify-between flex-wrap gap-2">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold">{plano.disciplina}</h2>
-              <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
-                <span>{plano.turma}</span>
-                <span>•</span>
-                <span>{formatMesAno(plano.mesAno)}</span>
-                <span>•</span>
-                <span>Prof. {plano.professorNome}</span>
-              </div>
-            </div>
-            <Badge
-              variant={plano.status === 'finalizado' ? 'default' : 'secondary'}
-            >
-              {plano.status === 'finalizado' ? 'Finalizado' : 'Rascunho'}
-            </Badge>
-          </div>
-          {plano.atualizadoEm && (
-            <p className="mt-2 text-xs text-muted-foreground">
-              Última atualização: {formatDate(plano.atualizadoEm)}
-            </p>
-          )}
+        {/* Informações de Status (apenas tela) */}
+        <div className="mb-6 flex justify-end print:hidden">
+          <Badge
+            variant={plano.status === 'finalizado' ? 'default' : 'secondary'}
+          >
+            {plano.status === 'finalizado' ? 'Finalizado' : 'Rascunho'}
+          </Badge>
         </div>
 
         {/* Informações do plano */}
