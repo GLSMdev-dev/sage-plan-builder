@@ -136,71 +136,57 @@ const PlanoView: React.FC = () => {
         </div>
 
         {/* Informações do plano */}
-        <div className="space-y-3 mb-6 print:mb-4 print:space-y-2">
+        <div className="space-y-3 mb-4 print:mb-2 print:space-y-1">
           {plano.objetivos && (
-            <Card className="print:shadow-none print:border print:rounded-none">
-              <CardHeader className="pb-1 pt-2 print:pt-1">
-                <CardTitle className="text-base print:text-[11pt]">Objetivos</CardTitle>
-              </CardHeader>
-              <CardContent className="print:pb-1">
-                <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{plano.objetivos}</p>
-              </CardContent>
-            </Card>
+            <div className="print:border-b print:border-black print:pb-1">
+              <h4 className="text-base font-bold print:text-[9pt] print:leading-tight">Objetivos</h4>
+              <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{plano.objetivos}</p>
+            </div>
           )}
           {plano.conteudo && (
-            <Card className="print:shadow-none print:border print:rounded-none">
-              <CardHeader className="pb-1 pt-2 print:pt-1">
-                <CardTitle className="text-base print:text-[11pt]">Conteúdo Programático</CardTitle>
-              </CardHeader>
-              <CardContent className="print:pb-1">
-                <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{plano.conteudo}</p>
-              </CardContent>
-            </Card>
+            <div className="print:border-b print:border-black print:pb-1">
+              <h4 className="text-base font-bold print:text-[9pt] print:leading-tight">Conteúdo Programático</h4>
+              <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{plano.conteudo}</p>
+            </div>
           )}
           {plano.avaliacao && (
-            <Card className="print:shadow-none print:border print:rounded-none">
-              <CardHeader className="pb-1 pt-2 print:pt-1">
-                <CardTitle className="text-base print:text-[11pt]">Avaliação</CardTitle>
-              </CardHeader>
-              <CardContent className="print:pb-1">
-                <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{plano.avaliacao}</p>
-              </CardContent>
-            </Card>
+            <div className="print:border-b print:border-black print:pb-1">
+              <h4 className="text-base font-bold print:text-[9pt] print:leading-tight">Avaliação</h4>
+              <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{plano.avaliacao}</p>
+            </div>
           )}
         </div>
 
         {/* Semanas */}
-        <h3 className="text-lg font-bold mb-4 print:text-[12pt] print:mb-2">Estrutura Semanal</h3>
-        <div className="space-y-4 print:space-y-2">
+        <h3 className="text-lg font-bold mb-4 print:text-[10pt] print:mb-1">Estrutura Semanal</h3>
+        <div className="space-y-4 print:space-y-1">
           {plano.semanas.map((semana, index) => (
-            <Card key={index} className="print:shadow-none print:border print:rounded-none print:break-inside-avoid">
-              <CardHeader className="pb-1 pt-2 print:pt-1">
-                <CardTitle className="text-base print:text-[11pt]">
-                  Semana {semana.numero}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 print:space-y-1 print:pb-2">
+            <div key={index} className="print:border print:border-black print:p-1 print:break-inside-avoid">
+              <h4 className="text-base font-bold print:text-[9pt] print:mb-0.5">
+                Semana {semana.numero}
+              </h4>
+              <div className="grid grid-cols-1 print:grid-cols-2 print:gap-4">
                 <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 print:text-[8pt] print:mb-0">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 print:text-[7pt] print:mb-0 print:text-black">
                     Metodologia
                   </p>
-                  <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{semana.metodologia}</p>
+                  <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{semana.metodologia}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 print:text-[8pt] print:mb-0">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 print:text-[7pt] print:mb-0 print:text-black">
                     Recursos
                   </p>
-                  <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{semana.recursos}</p>
+                  <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{semana.recursos}</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
 
         {/* Assinaturas e Rodapé de Impressão */}
-        <div className="hidden print:block mt-8">
+        <div className="hidden print:block mt-16 mt:mb-12">
           {/* Espaço para Assinaturas */}
-          <div className="grid grid-cols-2 gap-12 mb-8">
+          <div className="grid grid-cols-2 gap-16 mb-20">
             <div className="text-center">
               <div className="border-t border-black pt-1 text-[10pt] font-medium">
                 Assinatura do Professor
