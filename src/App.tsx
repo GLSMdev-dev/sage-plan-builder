@@ -14,10 +14,24 @@ import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
 const ProtectedRoute = ({ children, requireRole }: { children: React.ReactNode, requireRole?: 'professor' | 'gestor' }) => {
-  const { isAuthenticated, usuario } = useAuth();
+  const { isAuthenticated, isLoading, usuario } = useAuth();
+  if (isLoading) return <div className="flex min-h-screen items-center justify-center"><span className="text-muted-foreground">Carregando...</span></div>;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (requireRole && usuario?.perfil !== requireRole) return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
+};
+
+const RootRedirect = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return <div className="flex min-h-screen items-center justify-center"><span className="text-muted-foreground">Carregando...</span></div>;
+  return <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />;
+};
+
+const LoginRoute = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return <div className="flex min-h-screen items-center justify-center"><span className="text-muted-foreground">Carregando...</span></div>;
+  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+  return <Login />;
 };
 
 const queryClient = new QueryClient();
@@ -36,8 +50,8 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<RootRedirect />} />
+            <Route path="/login" element={<LoginRoute />} />
             <Route path="/registro" element={<Registro />} />
             <Route path="/dashboard" element={<ProtectedRoute><DashboardRouter /></ProtectedRoute>} />
             <Route path="/planos/novo" element={<ProtectedRoute><PlanoForm /></ProtectedRoute>} />

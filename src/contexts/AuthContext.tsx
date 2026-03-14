@@ -5,6 +5,7 @@ interface AuthContextType {
   usuario: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  googleAuthError: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: { nome: string; email: string; senha: string }) => Promise<void>;
   logout: () => void;
@@ -15,6 +16,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [usuario, setUsuario] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [googleAuthError, setGoogleAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('sage_user');
@@ -33,6 +35,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.setItem('sage_token', token);
           localStorage.setItem('sage_user', JSON.stringify(user));
           setUsuario(user);
+        } else if (res.status === 404 || res.status === 403) {
+          const data = await res.json().catch(() => ({}));
+          setGoogleAuthError(data.message || 'Email não encontrado no sistema. Contate a gestão.');
         }
       })
       .catch(() => {})
@@ -57,13 +62,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('sage_token');
     localStorage.removeItem('sage_user');
     setUsuario(null);
-    // Also clear the Replit Auth session
+    // Clear Replit Auth session as well (handles Google login)
     window.location.href = '/api/logout';
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ usuario, isAuthenticated: !!usuario, isLoading, login, register, logout }}
+      value={{ usuario, isAuthenticated: !!usuario, isLoading, googleAuthError, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>

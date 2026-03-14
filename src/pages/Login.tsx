@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,14 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, googleAuthError } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (googleAuthError) {
+      toast.error(googleAuthError);
+    }
+  }, [googleAuthError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
