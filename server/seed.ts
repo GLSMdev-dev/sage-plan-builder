@@ -129,7 +129,7 @@ const USERS_DATA = [
   { id: 33, nome: 'TAIS NUNES LEMOS', email: 'tais.lemos@prof.ce.gov.br', cpf: '610.912.343-96', perfil: 'professor' as const, senha: '610912', discs: [84,85,86,87,13,14,15,9,27] },
 ];
 
-async function seed() {
+export async function seedDatabase() {
   console.log('🌱 Iniciando seed do banco de dados...');
 
   // Truncate and reset sequences
@@ -177,10 +177,12 @@ async function seed() {
   ]);
 
   console.log('✅ Seed concluído com sucesso!');
-  process.exit(0);
 }
 
-seed().catch(err => {
-  console.error('❌ Erro no seed:', err);
-  process.exit(1);
-});
+// Allow running directly as a script
+if (process.argv[1]?.includes('seed')) {
+  seedDatabase().then(() => process.exit(0)).catch(err => {
+    console.error('❌ Erro no seed:', err);
+    process.exit(1);
+  });
+}

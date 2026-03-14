@@ -9,6 +9,9 @@ import planosRoutes from './routes/planos';
 import { db } from './db';
 import { sql } from 'drizzle-orm';
 import { setupAuth, registerAuthRoutes } from './replit_integrations/auth';
+import { seedDatabase } from './seed';
+import { usuarios } from '../shared/schema';
+import { count } from 'drizzle-orm';
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -21,6 +24,13 @@ async function start() {
   try {
     await db.execute(sql`SELECT 1`);
     console.log('✅ Banco de dados conectado');
+
+    // Auto-seed if database is empty (first production deploy)
+    const [{ value: userCount }] = await db.select({ value: count() }).from(usuarios);
+    if (Number(userCount) === 0) {
+      console.log('⚠️  Banco vazio detectado — iniciando seed automático...');
+      await seedDatabase();
+    }
 
     await setupAuth(app);
     registerAuthRoutes(app);
