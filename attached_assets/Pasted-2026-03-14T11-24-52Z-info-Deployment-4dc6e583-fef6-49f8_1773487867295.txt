@@ -1,0 +1,54 @@
+2026-03-14T11:24:52Z info: Deployment: 4dc6e583-fef6-49f8-b0c1-12e493d0986a
+2026-03-14T11:24:52Z info: Running Security Scan
+2026-03-14T11:25:06Z info: Security Scan Complete
+2026-03-14T11:25:07Z info: Preparing development database schema
+2026-03-14T11:25:15Z info: Successfully copied development database schema to production database
+2026-03-14T11:25:15Z info: Connecting to builder
+2026-03-14T11:25:16Z info: Builder connected
+2026-03-14T11:25:16Z info: Installing packages
+2026-03-14T11:25:16Z info: Starting Build
+
+> vite_react_shadcn_ts@0.0.0 build
+> vite build
+
+
+vite v5.4.19 building for production...
+
+transforming...
+
+Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+✓ 1796 modules transformed.
+
+rendering chunks...
+
+computing gzip size...
+
+dist/index.html                   0.93 kB │ gzip:   0.42 kB
+
+dist/assets/index-Bu40hamT.css   61.98 kB │ gzip:  11.01 kB
+dist/assets/index-C9klWncS.js   470.27 kB │ gzip: 148.30 kB
+✓ built in 3.98s
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.11.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.1
+npm notice To update run: npm install -g npm@11.11.1
+npm notice
+
+2026-03-14T11:25:23Z info: Pushing pid1 binary layer...
+2026-03-14T11:25:24Z info: Pushing Repl layer...
+2026-03-14T11:25:24Z info: Pushing hosting layer...
+2026-03-14T11:25:25Z info: Created hosting layer
+2026-03-14T11:25:25Z info: Created pid1 binary layer
+2026-03-14T11:25:42Z info: Created Repl layer
+2026-03-14T11:26:50Z info: Creating Autoscale service
+metasidecar: loaded enterprise status from environment is_enterprise=false
+starting up user application
+(node:47) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+a port configuration was specified but the required port was never opened
+2026-03-14T11:29:36Z error: The deployment failed because the application failed to open a port in time. This can happen because the application takes to long to open a server, or doesn't open one at all on the expected port. Note that this doesn't mean that the application is crashing, only that it's not opening a port in time. The application must serve traffic on the first port specified as 'localPort' in the port configuration specified in the .replit file. Make sure that the application opens a port quickly and that there are no operations taking too long on startup. Check the logs for more information.
