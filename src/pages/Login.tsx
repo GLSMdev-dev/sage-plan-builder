@@ -105,17 +105,9 @@ const Login: React.FC = () => {
             </Button>
           </form>
 
-          <div className="text-center text-sm text-muted-foreground">
-            Não tem conta?{' '}
-            <Link to="/registro" className="text-primary hover:underline font-medium">
-              Cadastre-se
-            </Link>
-          </div>
-
           <div className="rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-            <p className="font-medium mb-1">Contas de teste:</p>
-            <p>Professor: professor@sage.com / 123456</p>
-            <p>Gestor: gestor@sage.com / 123456</p>
+            <p>login: email institucional (@prof.ce.gov.br)</p>
+            <p>senha: primeiros 6 digitos do CPF</p>
           </div>
         </CardContent>
       </Card>
