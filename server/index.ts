@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
 import authRoutes from './routes/auth';
 import usuariosRoutes from './routes/usuarios';
 import disciplinasRoutes from './routes/disciplinas';
@@ -9,7 +11,8 @@ import { sql } from 'drizzle-orm';
 import { setupAuth, registerAuthRoutes } from './replit_integrations/auth';
 
 const app = express();
-const PORT = process.env.API_PORT || 3001;
+const isProd = process.env.NODE_ENV === 'production';
+const PORT = isProd ? (process.env.PORT || 5000) : (process.env.API_PORT || 3001);
 
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
@@ -27,6 +30,17 @@ async function start() {
     app.use('/api/usuarios', usuariosRoutes);
     app.use('/api/disciplinas', disciplinasRoutes);
     app.use('/api/planos', planosRoutes);
+
+    // In production, serve the built frontend and handle SPA routing
+    if (isProd) {
+      const distPath = path.join(process.cwd(), 'dist');
+      if (fs.existsSync(distPath)) {
+        app.use(express.static(distPath));
+        app.get('*', (_req, res) => {
+          res.sendFile(path.join(distPath, 'index.html'));
+        });
+      }
+    }
 
     app.listen(PORT, () => {
       console.log(`🚀 API rodando em http://localhost:${PORT}`);
