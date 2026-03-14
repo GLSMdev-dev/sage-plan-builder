@@ -79,7 +79,7 @@ const PlanoView: React.FC = () => {
         </div>
 
         {/* Cabeçalho de Impressão (exclusivo para print) */}
-        <div className="hidden print:block mb-2 -mt-10 text-center">
+        <div className="hidden print:block mb-4 pt-4 text-center">
           <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-1 h-12 object-contain" />
           <div className="space-y-0 text-[7pt] font-semibold uppercase leading-tight">
             <p>Coordenadoria Regional de Desenvolvimento da Educação – CREDE 16</p>
@@ -184,7 +184,7 @@ const PlanoView: React.FC = () => {
         </div>
 
         {/* Assinaturas e Rodapé de Impressão */}
-        <div className="hidden print:block mt-16 mt:mb-12">
+        <div className="hidden print:block mt-24 mb-12">
           {/* Espaço para Assinaturas */}
           <div className="grid grid-cols-2 gap-16 mb-20">
             <div className="text-center">
