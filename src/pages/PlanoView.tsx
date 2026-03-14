@@ -78,17 +78,42 @@ const PlanoView: React.FC = () => {
           </div>
         </div>
 
-        {/* Cabeçalho do plano */}
-        <div className="mb-8 print:mb-6">
-          <div className="print:text-center print:mb-4">
-            <h1 className="hidden print:block text-lg font-bold mb-1">
-              EEMTI Filgueiras Lima — SAGE
-            </h1>
-            <p className="hidden print:block text-sm mb-4">Plano de Aula Mensal</p>
+        {/* Cabeçalho de Impressão (exclusivo para print) */}
+        <div className="hidden print:block mb-6 text-center">
+          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-2 h-20 object-contain" />
+          <div className="space-y-0.5 text-sm font-semibold uppercase">
+            <p>Coordenadoria Regional de Desenvolvimento da Educação – CREDE 16</p>
+            <p>Escola de Ensino Médio em Tempo Integral Filgueiras Lima – INEP: 23142804</p>
           </div>
+          <h1 className="mt-4 text-xl font-bold border-y-2 border-black py-1">
+            PLANO DE AULA MENSAL
+          </h1>
+          
+          <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-left text-sm">
+            <div className="flex gap-2">
+              <span className="font-bold">DISCIPLINA:</span>
+              <span className="uppercase">{plano.disciplina}</span>
+            </div>
+            <div className="flex gap-2">
+              <span className="font-bold">SÉRIE:</span>
+              <span className="uppercase">{plano.turma}</span>
+            </div>
+            <div className="flex gap-2">
+              <span className="font-bold">MÊS:</span>
+              <span className="uppercase">{formatMesAno(plano.mesAno)}</span>
+            </div>
+            <div className="flex gap-2">
+              <span className="font-bold">PROFESSOR:</span>
+              <span className="uppercase">{plano.professorNome}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Cabeçalho da Tela (escondido na impressão) */}
+        <div className="mb-8 print:hidden">
           <div className="flex items-start justify-between flex-wrap gap-2">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold print:text-xl">{plano.disciplina}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold">{plano.disciplina}</h2>
               <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
                 <span>{plano.turma}</span>
                 <span>•</span>
@@ -99,7 +124,6 @@ const PlanoView: React.FC = () => {
             </div>
             <Badge
               variant={plano.status === 'finalizado' ? 'default' : 'secondary'}
-              className="print:hidden"
             >
               {plano.status === 'finalizado' ? 'Finalizado' : 'Rascunho'}
             </Badge>
@@ -173,9 +197,34 @@ const PlanoView: React.FC = () => {
           ))}
         </div>
 
-        {/* Rodapé de impressão */}
-        <div className="hidden print:block mt-8 pt-4 border-t text-xs text-muted-foreground text-center">
-          <p>Impresso em {new Date().toLocaleDateString('pt-BR')} — SAGE • EEMTI Filgueiras Lima</p>
+        {/* Assinaturas e Rodapé de Impressão */}
+        <div className="hidden print:block mt-12">
+          {/* Espaço para Assinaturas */}
+          <div className="grid grid-cols-2 gap-12 mb-12">
+            <div className="text-center">
+              <div className="border-t border-black pt-2 text-sm font-medium">
+                Assinatura do Professor
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="border-t border-black pt-2 text-sm font-medium">
+                Assinatura da Coordenação
+              </div>
+            </div>
+          </div>
+
+          {/* Informações Institucionais */}
+          <div className="pt-4 border-t-2 border-black text-[10px] text-center space-y-1 font-medium">
+            <p>
+              Rua Vereador Nelson de Sousa Alencar, sn – Veneza | Iguatu – Ceará | CEP: 63.504-356 - Fone: (88) 3581.9463
+            </p>
+            <p>
+              E-mail: filgueiraslimacrede16@escola.ce.gov.br | Instagram: @filgueiraslimaiguatu
+            </p>
+            <p className="text-[8px] mt-2 italic">
+              Documento gerado eletronicamente em {new Date().toLocaleDateString('pt-BR')} via SAGE
+            </p>
+          </div>
         </div>
       </main>
     </div>
