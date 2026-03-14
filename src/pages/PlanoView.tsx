@@ -80,7 +80,7 @@ const PlanoView: React.FC = () => {
 
         {/* Cabeçalho Institucional (Visível na tela e impressão) */}
         <div className="mb-6 pt-4 text-center border-b pb-4 print:border-none print:pt-4">
-          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-2 h-16 object-contain" />
+          <img src="/logo.png" alt="Logo Escola" className="mx-auto mb-2 h-16 object-contain" />
           <div className="space-y-0 text-[8pt] font-semibold uppercase leading-tight text-muted-foreground print:text-black">
             <p>Coordenadoria Regional de Desenvolvimento da Educação – CREDE 16</p>
             <p>Escola de Ensino Médio em Tempo Integral Filgueiras Lima – INEP: 23142804</p>
