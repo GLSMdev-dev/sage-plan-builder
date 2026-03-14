@@ -79,17 +79,17 @@ const PlanoView: React.FC = () => {
         </div>
 
         {/* Cabeçalho de Impressão (exclusivo para print) */}
-        <div className="hidden print:block mb-4 -mt-6 text-center">
-          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-2 h-16 object-contain" />
-          <div className="space-y-0 text-[10pt] font-semibold uppercase leading-tight">
+        <div className="hidden print:block mb-3 -mt-10 text-center">
+          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-1 h-16 object-contain" />
+          <div className="space-y-0 text-[9pt] font-semibold uppercase leading-tight">
             <p>Coordenadoria Regional de Desenvolvimento da Educação – CREDE 16</p>
             <p>Escola de Ensino Médio em Tempo Integral Filgueiras Lima – INEP: 23142804</p>
           </div>
-          <h1 className="mt-2 text-[12pt] font-bold border-y-2 border-black py-1">
+          <h1 className="mt-1 text-[10pt] font-bold border-y-2 border-black py-0.5">
             PLANO DE AULA MENSAL
           </h1>
           
-          <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-left text-[10pt]">
+          <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-0.5 text-left text-[9pt]">
             <div className="flex gap-2">
               <span className="font-bold">DISCIPLINA:</span>
               <span className="uppercase">{plano.disciplina}</span>
