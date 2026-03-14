@@ -79,17 +79,17 @@ const PlanoView: React.FC = () => {
         </div>
 
         {/* Cabeçalho de Impressão (exclusivo para print) */}
-        <div className="hidden print:block mb-6 text-center">
-          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-2 h-20 object-contain" />
-          <div className="space-y-0.5 text-sm font-semibold uppercase">
+        <div className="hidden print:block mb-4 -mt-6 text-center">
+          <img src="/logo-escola.png" alt="Logo Escola" className="mx-auto mb-2 h-16 object-contain" />
+          <div className="space-y-0 text-[10pt] font-semibold uppercase leading-tight">
             <p>Coordenadoria Regional de Desenvolvimento da Educação – CREDE 16</p>
             <p>Escola de Ensino Médio em Tempo Integral Filgueiras Lima – INEP: 23142804</p>
           </div>
-          <h1 className="mt-4 text-xl font-bold border-y-2 border-black py-1">
+          <h1 className="mt-2 text-[12pt] font-bold border-y-2 border-black py-1">
             PLANO DE AULA MENSAL
           </h1>
           
-          <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-left text-sm">
+          <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-left text-[10pt]">
             <div className="flex gap-2">
               <span className="font-bold">DISCIPLINA:</span>
               <span className="uppercase">{plano.disciplina}</span>
@@ -136,61 +136,61 @@ const PlanoView: React.FC = () => {
         </div>
 
         {/* Informações do plano */}
-        <div className="space-y-4 mb-8 print:mb-6">
+        <div className="space-y-3 mb-6 print:mb-4 print:space-y-2">
           {plano.objetivos && (
-            <Card className="print:shadow-none print:border">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Objetivos</CardTitle>
+            <Card className="print:shadow-none print:border print:rounded-none">
+              <CardHeader className="pb-1 pt-2 print:pt-1">
+                <CardTitle className="text-base print:text-[11pt]">Objetivos</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm whitespace-pre-wrap">{plano.objetivos}</p>
+              <CardContent className="print:pb-1">
+                <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{plano.objetivos}</p>
               </CardContent>
             </Card>
           )}
           {plano.conteudo && (
-            <Card className="print:shadow-none print:border">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Conteúdo Programático</CardTitle>
+            <Card className="print:shadow-none print:border print:rounded-none">
+              <CardHeader className="pb-1 pt-2 print:pt-1">
+                <CardTitle className="text-base print:text-[11pt]">Conteúdo Programático</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm whitespace-pre-wrap">{plano.conteudo}</p>
+              <CardContent className="print:pb-1">
+                <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{plano.conteudo}</p>
               </CardContent>
             </Card>
           )}
           {plano.avaliacao && (
-            <Card className="print:shadow-none print:border">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Avaliação</CardTitle>
+            <Card className="print:shadow-none print:border print:rounded-none">
+              <CardHeader className="pb-1 pt-2 print:pt-1">
+                <CardTitle className="text-base print:text-[11pt]">Avaliação</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm whitespace-pre-wrap">{plano.avaliacao}</p>
+              <CardContent className="print:pb-1">
+                <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{plano.avaliacao}</p>
               </CardContent>
             </Card>
           )}
         </div>
 
         {/* Semanas */}
-        <h3 className="text-lg font-bold mb-4">Estrutura Semanal</h3>
-        <div className="space-y-4">
+        <h3 className="text-lg font-bold mb-4 print:text-[12pt] print:mb-2">Estrutura Semanal</h3>
+        <div className="space-y-4 print:space-y-2">
           {plano.semanas.map((semana, index) => (
-            <Card key={index} className="print:shadow-none print:border print:break-inside-avoid">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">
+            <Card key={index} className="print:shadow-none print:border print:rounded-none print:break-inside-avoid">
+              <CardHeader className="pb-1 pt-2 print:pt-1">
+                <CardTitle className="text-base print:text-[11pt]">
                   Semana {semana.numero}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-3 print:space-y-1 print:pb-2">
                 <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 print:text-[8pt] print:mb-0">
                     Metodologia
                   </p>
-                  <p className="text-sm whitespace-pre-wrap">{semana.metodologia}</p>
+                  <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{semana.metodologia}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 print:text-[8pt] print:mb-0">
                     Recursos
                   </p>
-                  <p className="text-sm whitespace-pre-wrap">{semana.recursos}</p>
+                  <p className="text-sm print:text-[10pt] whitespace-pre-wrap">{semana.recursos}</p>
                 </div>
               </CardContent>
             </Card>
@@ -198,31 +198,31 @@ const PlanoView: React.FC = () => {
         </div>
 
         {/* Assinaturas e Rodapé de Impressão */}
-        <div className="hidden print:block mt-12">
+        <div className="hidden print:block mt-8">
           {/* Espaço para Assinaturas */}
-          <div className="grid grid-cols-2 gap-12 mb-12">
+          <div className="grid grid-cols-2 gap-12 mb-8">
             <div className="text-center">
-              <div className="border-t border-black pt-2 text-sm font-medium">
+              <div className="border-t border-black pt-1 text-[10pt] font-medium">
                 Assinatura do Professor
               </div>
             </div>
             <div className="text-center">
-              <div className="border-t border-black pt-2 text-sm font-medium">
+              <div className="border-t border-black pt-1 text-[10pt] font-medium">
                 Assinatura da Coordenação
               </div>
             </div>
           </div>
 
-          {/* Informações Institucionais */}
-          <div className="pt-4 border-t-2 border-black text-[10px] text-center space-y-1 font-medium">
+          {/* Informações Institucionais - Posicionado no rodapé da página */}
+          <div className="print:fixed print:bottom-4 print:left-0 print:right-0 pt-2 border-t border-black text-[8pt] text-center space-y-0.5 font-medium bg-white">
             <p>
               Rua Vereador Nelson de Sousa Alencar, sn – Veneza | Iguatu – Ceará | CEP: 63.504-356 - Fone: (88) 3581.9463
             </p>
             <p>
               E-mail: filgueiraslimacrede16@escola.ce.gov.br | Instagram: @filgueiraslimaiguatu
             </p>
-            <p className="text-[8px] mt-2 italic">
-              Documento gerado eletronicamente em {new Date().toLocaleDateString('pt-BR')} via SAGE
+            <p className="text-[7pt] italic">
+              Documento gerado em {new Date().toLocaleDateString('pt-BR')} via SAGE
             </p>
           </div>
         </div>
