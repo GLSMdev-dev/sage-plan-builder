@@ -1,7 +1,7 @@
 import api from './api';
 
 export interface LoginCredentials {
-  email: string;
+  email: string; // Pode ser email ou nome de usuário
   senha: string;
 }
 
@@ -9,6 +9,7 @@ export interface User {
   id: string;
   nome: string;
   email: string;
+  usuario: string;
   cpf?: string;
   perfil: 'professor' | 'gestor';
   status?: 'ativo' | 'inativo';

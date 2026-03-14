@@ -12,6 +12,7 @@ export const usuarios = pgTable('usuarios', {
   id: serial('id').primaryKey(),
   nome: varchar('nome', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
+  usuario: varchar('usuario', { length: 255 }).notNull().unique(),
   cpf: varchar('cpf', { length: 20 }),
   senhaHash: varchar('senha_hash', { length: 255 }).notNull(),
   perfil: perfilEnum('perfil').notNull().default('professor'),

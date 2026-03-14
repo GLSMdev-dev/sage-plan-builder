@@ -12,14 +12,8 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login, googleAuthError } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (googleAuthError) {
-      toast.error(googleAuthError);
-    }
-  }, [googleAuthError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,10 +33,6 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = '/api/login';
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-sage-gradient px-4">
       <Card className="w-full max-w-md shadow-sage">
@@ -53,30 +43,13 @@ const Login: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full flex items-center gap-2"
-            onClick={handleGoogleLogin}
-            data-testid="button-google-login"
-          >
-            <SiGoogle className="h-4 w-4" />
-            Continuar com Google
-          </Button>
-
-          <div className="flex items-center gap-3">
-            <div className="flex-1 border-t border-border" />
-            <span className="text-xs text-muted-foreground">ou</span>
-            <div className="flex-1 border-t border-border" />
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email ou Usuário</Label>
               <Input
                 id="email"
-                type="email"
-                placeholder="seu@email.com"
+                type="text"
+                placeholder="nome.sobrenome ou seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -101,12 +74,12 @@ const Login: React.FC = () => {
               disabled={isLoading}
               data-testid="button-submit-login"
             >
-              {isLoading ? 'Entrando...' : 'Entrar com email'}
+              {isLoading ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
 
           <div className="rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-            <p>login: email institucional (@prof.ce.gov.br)</p>
+            <p>login: nome de usuário ou e-mail institucional</p>
             <p>senha: primeiros 6 digitos do CPF</p>
           </div>
         </CardContent>

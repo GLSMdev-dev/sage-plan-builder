@@ -146,7 +146,8 @@ export async function seedDatabase() {
   console.log('  Inserindo usuários...');
   for (const u of USERS_DATA) {
     const hash = await bcrypt.hash(u.senha, 10);
-    await db.execute(sql`INSERT INTO usuarios (id, nome, email, cpf, senha_hash, perfil, status) VALUES (${u.id}, ${u.nome}, ${u.email}, ${u.cpf}, ${hash}, ${u.perfil}, 'ativo')`);
+    const usuario = u.email.split('@')[0];
+    await db.execute(sql`INSERT INTO usuarios (id, nome, email, usuario, cpf, senha_hash, perfil, status) VALUES (${u.id}, ${u.nome}, ${u.email}, ${usuario}, ${u.cpf}, ${hash}, ${u.perfil}, 'ativo')`);
     for (const discId of u.discs) {
       await db.execute(sql`INSERT INTO professor_disciplinas (professor_id, disciplina_id) VALUES (${u.id}, ${discId})`);
     }
