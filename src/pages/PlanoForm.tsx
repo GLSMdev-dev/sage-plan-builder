@@ -225,7 +225,13 @@ const PlanoForm: React.FC = () => {
     );
   }
 
-  return (
+    // Séries que este professor realmente leciona
+    const seriesDisponiveis = [...new Set(minhasDisciplinas.map(d => d.serie))].sort();
+
+    // Disciplinas filtradas pela série selecionada
+    const disciplinasFiltradas = minhasDisciplinas.filter(d => d.serie === turma || d.serie === 'Todas');
+
+    return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="mx-auto max-w-4xl px-4 sm:px-6 py-6 sm:py-8">
@@ -244,34 +250,39 @@ const PlanoForm: React.FC = () => {
             <CardTitle className="text-lg">Informações Básicas</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="disciplina">Disciplina *</Label>
-              <Select value={disciplina} onValueChange={v => { setDisciplina(v); markChanged(); }}>
-                <SelectTrigger><SelectValue placeholder={minhasDisciplinas.length ? "Selecione a Disciplina" : "Nenhuma disciplina atribuída"} /></SelectTrigger>
-                <SelectContent>
-                  {minhasDisciplinas.map(d => (
-                    <SelectItem key={d.id} value={d.nome}>{d.nome} - {d.cargaHoraria} aulas/sem</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground mt-1">
-                A disciplina precisará ser atribuída a você pelo Gestor na tela de Configurações, caso não apareça nesta lista.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Turma *</Label>
-                <Select value={turma} onValueChange={v => { setTurma(v); markChanged(); }}>
-                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <Label>Série / Ano *</Label>
+                <Select value={turma} onValueChange={v => { setTurma(v); setDisciplina(''); markChanged(); }}>
+                  <SelectTrigger><SelectValue placeholder={seriesDisponiveis.length ? "Selecione a Série" : "Nenhuma série disponível"} /></SelectTrigger>
                   <SelectContent>
-                    {TURMAS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    {seriesDisponiveis.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-2">
-                <Label>Mês *</Label>
+                <Label htmlFor="disciplina">Disciplina *</Label>
+                <Select 
+                  value={disciplina} 
+                  onValueChange={v => { setDisciplina(v); markChanged(); }}
+                  disabled={!turma}
+                >
+                  <SelectTrigger><SelectValue placeholder={!turma ? "Aguardando Série..." : (disciplinasFiltradas.length ? "Selecione a Disciplina" : "Sem disciplinas para esta série")} /></SelectTrigger>
+                  <SelectContent>
+                    {disciplinasFiltradas.map(d => (
+                      <SelectItem key={d.id} value={d.nome}>{d.nome} - {d.cargaHoraria} aulas/sem</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Mês do Plano *</Label>
                 <Select value={mes} onValueChange={v => { setMes(v); markChanged(); }}>
-                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Selecione o Mês" /></SelectTrigger>
                   <SelectContent>
                     {MESES.map(m => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
                   </SelectContent>
@@ -289,6 +300,7 @@ const PlanoForm: React.FC = () => {
                 />
               </div>
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="objetivos">Objetivos</Label>
               <Textarea
