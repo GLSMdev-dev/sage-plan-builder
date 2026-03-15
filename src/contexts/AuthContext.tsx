@@ -24,13 +24,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
+        // Buscar perfil real no banco de dados para garantir o ID e Perfil corretos
+        const { data: dbUser } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('email', session.user.email)
+          .maybeSingle();
+
         const user: User = {
-          id: session.user.id,
-          nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
+          id: dbUser ? String(dbUser.id) : session.user.id,
+          nome: dbUser?.nome || session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
           email: session.user.email || '',
           usuario: session.user.user_metadata.usuario || session.user.email?.split('@')[0] || '',
-          perfil: session.user.user_metadata.perfil || 'professor',
-          status: 'ativo',
+          perfil: dbUser?.perfil || session.user.user_metadata.perfil || 'professor',
+          status: dbUser?.status || 'ativo',
         };
         setUsuario(user);
       }
@@ -42,13 +49,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
+        const { data: dbUser } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('email', session.user.email)
+          .maybeSingle();
+
         const user: User = {
-          id: session.user.id,
-          nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
+          id: dbUser ? String(dbUser.id) : session.user.id,
+          nome: dbUser?.nome || session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
           email: session.user.email || '',
           usuario: session.user.user_metadata.usuario || session.user.email?.split('@')[0] || '',
-          perfil: session.user.user_metadata.perfil || 'professor',
-          status: 'ativo',
+          perfil: dbUser?.perfil || session.user.user_metadata.perfil || 'professor',
+          status: dbUser?.status || 'ativo',
         };
         setUsuario(user);
       } else {

@@ -24,25 +24,33 @@ export interface AuthResponse {
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email: credentials.email,
       password: credentials.senha,
     });
 
-    if (error) throw error;
-    if (!data.user) throw new Error('Falha no login');
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('Falha no login');
 
-    // Mapear metadados do Supabase para o nosso objeto User
+    // Buscar perfil real no banco de dados
+    const { data: dbUser, error: dbError } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', authData.user.email)
+      .maybeSingle();
+
+    if (dbError) throw dbError;
+
     const user: User = {
-      id: data.user.id,
-      nome: data.user.user_metadata.nome || data.user.email?.split('@')[0] || '',
-      email: data.user.email || '',
-      usuario: data.user.user_metadata.usuario || data.user.email?.split('@')[0] || '',
-      perfil: data.user.user_metadata.perfil || 'professor',
-      status: 'ativo',
+      id: dbUser ? String(dbUser.id) : authData.user.id,
+      nome: dbUser?.nome || authData.user.user_metadata.nome || authData.user.email?.split('@')[0] || '',
+      email: authData.user.email || '',
+      usuario: authData.user.user_metadata.usuario || authData.user.email?.split('@')[0] || '',
+      perfil: dbUser?.perfil || authData.user.user_metadata.perfil || 'professor',
+      status: dbUser?.status || 'ativo',
     };
 
-    return { token: data.session?.access_token || '', usuario: user };
+    return { token: authData.session?.access_token || '', usuario: user };
   },
 
   register: async (data: { nome: string; email: string; senha: string; cpf?: string }): Promise<AuthResponse> => {
@@ -61,12 +69,41 @@ export const authService = {
     if (error) throw error;
     if (!response.user) throw new Error('Falha no registro');
 
+    // Criar registro no banco de dados se não existir
+    const { data: existingUser } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', data.email)
+      .maybeSingle();
+
+    let dbId = response.user.id;
+
+    if (!existingUser) {
+      const { data: newUser, error: createError } = await supabase
+        .from('usuarios')
+        .insert({
+          nome: data.nome,
+          email: data.email,
+          senha_hash: 'managed_by_supabase',
+          perfil: 'professor',
+          status: 'ativo'
+        })
+        .select()
+        .single();
+      
+      if (!createError && newUser) {
+        dbId = String(newUser.id);
+      }
+    } else {
+      dbId = String(existingUser.id);
+    }
+
     const user: User = {
-      id: response.user.id,
+      id: dbId,
       nome: data.nome,
       email: data.email,
       usuario: data.email.split('@')[0],
-      perfil: 'professor',
+      perfil: existingUser?.perfil || 'professor',
       status: 'ativo',
     };
 
