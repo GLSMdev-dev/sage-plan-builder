@@ -14,6 +14,7 @@ export const formatDate = (dateString: string): string => {
  * Formata mês/ano para exibição (ex: "2026-03" → "Março de 2026")
  */
 export const formatMesAno = (mesAno: string): string => {
+  if (!mesAno || !mesAno.includes('-')) return 'Data inválida';
   const [ano, mes] = mesAno.split('-');
   const meses = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -26,6 +27,7 @@ export const formatMesAno = (mesAno: string): string => {
  * Retorna o número de semanas em um mês
  */
 export const getSemanasDoMes = (mesAno: string): number => {
+  if (!mesAno || !mesAno.includes('-')) return 0;
   const [ano, mes] = mesAno.split('-').map(Number);
   const primeiroDia = new Date(ano, mes - 1, 1);
   const ultimoDia = new Date(ano, mes, 0);

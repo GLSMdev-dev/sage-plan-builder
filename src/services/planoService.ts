@@ -22,6 +22,22 @@ export interface PlanoAula {
   atualizadoEm?: string;
 }
 
+const mapPlano = (p: any): PlanoAula => ({
+  _id: String(p.id),
+  professorId: p.professor_id,
+  professorNome: p.professor_nome,
+  disciplina: p.disciplina_nome,
+  turma: p.turma,
+  mesAno: p.mes_ano,
+  objetivos: p.objetivos || '',
+  conteudo: p.conteudo || '',
+  avaliacao: p.avaliacao || '',
+  semanas: p.semanas || [],
+  status: p.status,
+  criadoEm: p.criado_em,
+  atualizadoEm: p.atualizado_em,
+});
+
 export const planoService = {
   listar: async (): Promise<PlanoAula[]> => {
     const { data, error } = await supabase
@@ -29,13 +45,7 @@ export const planoService = {
       .select('*, semanas:plano_semanas(*)');
     
     if (error) throw error;
-    
-    // Mapear snake_case para camelCase se necessário, mas aqui vamos focar no _id
-    return (data || []).map(p => ({
-      ...p,
-      _id: String(p.id),
-      disciplina: p.disciplina_nome, // Mapeio campo se necessário
-    })) as any;
+    return (data || []).map(mapPlano);
   },
 
   buscarPorId: async (id: string): Promise<PlanoAula> => {
@@ -46,7 +56,7 @@ export const planoService = {
       .single();
     
     if (error) throw error;
-    return { ...data, _id: String(data.id), disciplina: data.disciplina_nome } as any;
+    return mapPlano(data);
   },
 
   criar: async (plano: Omit<PlanoAula, '_id' | 'criadoEm' | 'atualizadoEm'>): Promise<PlanoAula> => {
@@ -72,11 +82,16 @@ export const planoService = {
     if (semanas?.length) {
       const { error: semError } = await supabase
         .from('plano_semanas')
-        .insert(semanas.map(s => ({ ...s, plano_id: data.id })));
+        .insert(semanas.map(s => ({
+          numero: s.numero,
+          metodologia: s.metodologia,
+          recursos: s.recursos,
+          plano_id: data.id 
+        })));
       if (semError) throw semError;
     }
 
-    return { ...data, _id: String(data.id), semanas } as any;
+    return mapPlano({ ...data, semanas });
   },
 
   atualizar: async (id: string, plano: Partial<PlanoAula>): Promise<PlanoAula> => {
@@ -84,7 +99,11 @@ export const planoService = {
     const updateData: any = {};
     if (rest.disciplina) updateData.disciplina_nome = rest.disciplina;
     if (rest.turma) updateData.turma = rest.turma;
-    // ... outros campos seriam mapeados aqui
+    if (rest.mesAno) updateData.mes_ano = rest.mesAno;
+    if (rest.objetivos !== undefined) updateData.objetivos = rest.objetivos;
+    if (rest.conteudo !== undefined) updateData.conteudo = rest.conteudo;
+    if (rest.avaliacao !== undefined) updateData.avaliacao = rest.avaliacao;
+    if (rest.status) updateData.status = rest.status;
 
     const { data, error } = await supabase
       .from('planos_aula')
@@ -94,7 +113,10 @@ export const planoService = {
       .single();
 
     if (error) throw error;
-    return { ...data, _id: String(data.id) } as any;
+    
+    // Simplificando: em uma atualização de plano completo, poderíamos deletar e reinserir semanas
+    // ou fazer um upsert. Para este fix, focamos na correção do mapeamento de leitura.
+    return mapPlano(data);
   },
 
   excluir: async (id: string): Promise<void> => {

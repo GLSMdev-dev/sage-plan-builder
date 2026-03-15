@@ -51,28 +51,34 @@ export const gestorService = {
       .from('disciplinas')
       .select('*');
     if (error) throw error;
-    return data as any;
+    return (data || []).map(d => ({
+      ...d,
+      cargaHoraria: d.carga_horaria
+    })) as any;
   },
 
   salvarDisciplina: async (disc: Partial<Disciplina>): Promise<Disciplina> => {
-    const { id, ...rest } = disc;
+    const { id, cargaHoraria, ...rest } = disc;
+    const body: any = { ...rest };
+    if (cargaHoraria !== undefined) body.carga_horaria = cargaHoraria;
+
     if (id) {
       const { data, error } = await supabase
         .from('disciplinas')
-        .update(rest)
+        .update(body)
         .eq('id', id)
         .select()
         .single();
       if (error) throw error;
-      return data as any;
+      return { ...data, cargaHoraria: data.carga_horaria };
     }
     const { data, error } = await supabase
       .from('disciplinas')
-      .insert(rest)
+      .insert(body)
       .select()
       .single();
     if (error) throw error;
-    return data as any;
+    return { ...data, cargaHoraria: data.carga_horaria };
   },
 
   excluirDisciplina: async (id: string): Promise<void> => {
