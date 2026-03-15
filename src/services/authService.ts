@@ -32,22 +32,14 @@ export const authService = {
     if (authError) throw authError;
     if (!authData.user) throw new Error('Falha no login');
 
-    // Buscar perfil real no banco de dados
-    const { data: dbUser, error: dbError } = await supabase
-      .from('usuarios')
-      .select('*')
-      .eq('email', authData.user.email)
-      .maybeSingle();
-
-    if (dbError) throw dbError;
-
+    // Mapear básico. O Context atualizará o perfil real em background
     const user: User = {
-      id: dbUser ? String(dbUser.id) : authData.user.id,
-      nome: dbUser?.nome || authData.user.user_metadata.nome || authData.user.email?.split('@')[0] || '',
+      id: authData.user.id,
+      nome: authData.user.user_metadata.nome || authData.user.email?.split('@')[0] || '',
       email: authData.user.email || '',
       usuario: authData.user.user_metadata.usuario || authData.user.email?.split('@')[0] || '',
-      perfil: dbUser?.perfil || authData.user.user_metadata.perfil || 'professor',
-      status: dbUser?.status || 'ativo',
+      perfil: authData.user.user_metadata.perfil || 'professor',
+      status: 'ativo',
     };
 
     return { token: authData.session?.access_token || '', usuario: user };

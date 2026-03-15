@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (session?.user) {
           console.log('Session found for:', session.user.email);
-          let user: User = {
+          const basicUser: User = {
             id: session.user.id,
             nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
             email: session.user.email || '',
@@ -49,38 +49,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             perfil: session.user.user_metadata.perfil || 'professor',
             status: 'ativo',
           };
+          
+          setUsuario(basicUser);
 
+          // Fetch database profile in background
           if (session.user.email) {
-            console.log('Fetching database profile...');
-            const { data: dbUser, error: dbError } = await supabase
+            console.log('Background: Fetching database profile...');
+            supabase
               .from('usuarios')
               .select('*')
               .eq('email', session.user.email)
-              .maybeSingle();
-
-            if (dbError) {
-              console.error('Error fetching db profile:', dbError);
-            } else if (dbUser) {
-              console.log('Database profile found:', dbUser.perfil);
-              user = {
-                ...user,
-                id: String(dbUser.id),
-                nome: dbUser.nome || user.nome,
-                perfil: dbUser.perfil || user.perfil,
-                status: dbUser.status || user.status,
-              };
-            } else {
-              console.warn('No database profile found for this email.');
-            }
+              .maybeSingle()
+              .then(({ data: dbUser, error: dbError }) => {
+                if (dbError) {
+                  console.error('Background: Error fetching db profile:', dbError);
+                } else if (dbUser) {
+                  console.log('Background: Database profile found:', dbUser.perfil);
+                  setUsuario(prev => prev ? {
+                    ...prev,
+                    id: String(dbUser.id),
+                    nome: dbUser.nome || prev.nome,
+                    perfil: dbUser.perfil || prev.perfil,
+                    status: dbUser.status || prev.status,
+                  } : null);
+                }
+              });
           }
-          setUsuario(user);
         } else {
           console.log('No active session.');
         }
       } catch (error) {
         console.error('Unexpected error in checkSession:', error);
       } finally {
-        console.log('Auth initialization complete.');
+        console.log('Auth checkSession flow reached finally.');
         clearTimeout(timeoutId);
         setIsLoading(false);
       }
@@ -89,10 +90,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state change:', event, session?.user?.email);
       if (session?.user) {
-        let user: User = {
+        const basicUser: User = {
           id: session.user.id,
           nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
           email: session.user.email || '',
@@ -100,25 +101,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           perfil: session.user.user_metadata.perfil || 'professor',
           status: 'ativo',
         };
+        
+        setUsuario(basicUser);
 
         if (session.user.email) {
-          const { data: dbUser } = await supabase
+          supabase
             .from('usuarios')
             .select('*')
             .eq('email', session.user.email)
-            .maybeSingle();
-
-          if (dbUser) {
-            user = {
-              ...user,
-              id: String(dbUser.id),
-              nome: dbUser.nome || user.nome,
-              perfil: dbUser.perfil || user.perfil,
-              status: dbUser.status || user.status,
-            };
-          }
+            .maybeSingle()
+            .then(({ data: dbUser }) => {
+              if (dbUser) {
+                setUsuario(prev => prev ? {
+                  ...prev,
+                  id: String(dbUser.id),
+                  nome: dbUser.nome || prev.nome,
+                  perfil: dbUser.perfil || prev.perfil,
+                  status: dbUser.status || prev.status,
+                } : null);
+              }
+            });
         }
-        setUsuario(user);
       } else {
         setUsuario(null);
       }
