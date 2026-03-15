@@ -56,7 +56,7 @@ const PlanoForm: React.FC = () => {
   useEffect(() => {
     gestorService.listarDisciplinas().then(todas => {
       if (usuario?.disciplinasLecionadas) {
-        const dProf = todas.filter(d => usuario.disciplinasLecionadas?.includes(d.id));
+        const dProf = todas.filter(d => usuario.disciplinasLecionadas?.includes(String(d.id)));
         setMinhasDisciplinas(dProf);
       }
     });
