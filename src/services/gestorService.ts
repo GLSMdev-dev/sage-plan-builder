@@ -1,4 +1,4 @@
-import api from './api';
+import { supabase } from '../lib/supabase';
 import { User } from './authService';
 
 export interface Disciplina {
@@ -13,38 +13,70 @@ export interface Disciplina {
 
 export const gestorService = {
   listarProfessores: async (): Promise<User[]> => {
-    const { data } = await api.get<User[]>('/usuarios');
-    return data;
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('*');
+    if (error) throw error;
+    return data as any;
   },
 
   salvarProfessor: async (prof: Partial<User & { senha?: string }>): Promise<User> => {
-    if (prof.id) {
-      const { data } = await api.put<User>(`/usuarios/${prof.id}`, prof);
-      return data;
+    const { id, ...rest } = prof;
+    if (id) {
+      const { data, error } = await supabase
+        .from('usuarios')
+        .update(rest)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as any;
     }
-    const { data } = await api.post<User>('/usuarios', prof);
-    return data;
+    const { data, error } = await supabase
+      .from('usuarios')
+      .insert(rest)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as any;
   },
 
   excluirProfessor: async (id: string): Promise<void> => {
-    await api.delete(`/usuarios/${id}`);
+    const { error } = await supabase.from('usuarios').delete().eq('id', id);
+    if (error) throw error;
   },
 
   listarDisciplinas: async (): Promise<Disciplina[]> => {
-    const { data } = await api.get<Disciplina[]>('/disciplinas');
-    return data;
+    const { data, error } = await supabase
+      .from('disciplinas')
+      .select('*');
+    if (error) throw error;
+    return data as any;
   },
 
   salvarDisciplina: async (disc: Partial<Disciplina>): Promise<Disciplina> => {
-    if (disc.id) {
-      const { data } = await api.put<Disciplina>(`/disciplinas/${disc.id}`, disc);
-      return data;
+    const { id, ...rest } = disc;
+    if (id) {
+      const { data, error } = await supabase
+        .from('disciplinas')
+        .update(rest)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as any;
     }
-    const { data } = await api.post<Disciplina>('/disciplinas', disc);
-    return data;
+    const { data, error } = await supabase
+      .from('disciplinas')
+      .insert(rest)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as any;
   },
 
   excluirDisciplina: async (id: string): Promise<void> => {
-    await api.delete(`/disciplinas/${id}`);
+    const { error } = await supabase.from('disciplinas').delete().eq('id', id);
+    if (error) throw error;
   },
 };

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { User, LoginCredentials, authService } from '@/services/authService';
+import { supabase } from '@/lib/supabase';
 
 interface AuthContextType {
   usuario: User | null;
@@ -19,29 +20,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [googleAuthError, setGoogleAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('sage_user');
-    const storedToken = localStorage.getItem('sage_token');
-    if (storedUser && storedToken) {
-      setUsuario(JSON.parse(storedUser));
+    // Check current session
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const user: User = {
+          id: session.user.id,
+          nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
+          email: session.user.email || '',
+          usuario: session.user.user_metadata.usuario || session.user.email?.split('@')[0] || '',
+          perfil: session.user.user_metadata.perfil || 'professor',
+          status: 'ativo',
+        };
+        setUsuario(user);
+      }
       setIsLoading(false);
-      return;
-    }
+    };
 
-    // Try to exchange an active Google (Replit Auth) session for a SAGE token
-    fetch('/api/auth/google-profile', { credentials: 'include' })
-      .then(async (res) => {
-        if (res.ok) {
-          const { token, usuario: user } = await res.json();
-          localStorage.setItem('sage_token', token);
-          localStorage.setItem('sage_user', JSON.stringify(user));
-          setUsuario(user);
-        } else if (res.status === 404 || res.status === 403) {
-          const data = await res.json().catch(() => ({}));
-          setGoogleAuthError(data.message || 'Email não encontrado no sistema. Contate a gestão.');
-        }
-      })
-      .catch(() => {})
-      .finally(() => setIsLoading(false));
+    checkSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const user: User = {
+          id: session.user.id,
+          nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
+          email: session.user.email || '',
+          usuario: session.user.user_metadata.usuario || session.user.email?.split('@')[0] || '',
+          perfil: session.user.user_metadata.perfil || 'professor',
+          status: 'ativo',
+        };
+        setUsuario(user);
+      } else {
+        setUsuario(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
@@ -58,12 +75,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUsuario(user);
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem('sage_token');
     localStorage.removeItem('sage_user');
     setUsuario(null);
-    // Clear Replit Auth session as well (handles Google login)
-    window.location.href = '/api/logout';
   }, []);
 
   return (
