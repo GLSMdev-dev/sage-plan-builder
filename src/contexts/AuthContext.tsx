@@ -28,6 +28,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }, 5000);
 
+    const fetchProfile = async (email: string, authUser: any) => {
+      console.log('Background: Fetching database profile for:', email);
+      try {
+        const { data: dbUser, error: dbError } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('email', email)
+          .maybeSingle();
+
+        if (dbError) {
+          console.error('Background: Error fetching db profile:', dbError);
+          return;
+        }
+
+        if (dbUser) {
+          console.log('Background: Database profile found:', dbUser.perfil);
+          const { data: discs } = await supabase
+            .from('professor_disciplinas')
+            .select('disciplina_id')
+            .eq('professor_id', dbUser.id);
+
+          setUsuario({
+            id: String(dbUser.id),
+            nome: dbUser.nome || authUser.user_metadata.nome || email.split('@')[0],
+            email: email,
+            usuario: authUser.user_metadata.usuario || email.split('@')[0],
+            perfil: dbUser.perfil || 'professor',
+            status: dbUser.status || 'ativo',
+            disciplinasLecionadas: discs?.map(d => String(d.disciplina_id)) || [],
+          });
+        }
+      } catch (err) {
+        console.error('Background: Unexpected error in fetchProfile:', err);
+      }
+    };
+
     // Check current session
     const checkSession = async () => {
       console.log('Checking Supabase session...');
@@ -36,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (sessionError) {
           console.error('Error getting session:', sessionError);
+          setIsLoading(false);
           return;
         }
 
@@ -51,52 +88,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           
           setUsuario(basicUser);
+          setIsLoading(false); // Libera o app imediatamente
 
-          // Fetch database profile in background
           if (session.user.email) {
-            console.log('Background: Fetching database profile...');
-            Promise.all([
-              supabase
-                .from('usuarios')
-                .select('*')
-                .eq('email', session.user.email)
-                .maybeSingle(),
-              supabase
-                .from('professor_disciplinas')
-                .select('disciplina_id')
-                .eq('professor_id', (await supabase.from('usuarios').select('id').eq('email', session.user.email).maybeSingle()).data?.id || 0)
-            ]).then(([{ data: dbUser, error: dbError }, { data: discs }]) => {
-              if (dbError) {
-                console.error('Background: Error fetching db profile:', dbError);
-              } else if (dbUser) {
-                console.log('Background: Database profile found:', dbUser.perfil);
-                setUsuario(prev => prev ? {
-                  ...prev,
-                  id: String(dbUser.id),
-                  nome: dbUser.nome || prev.nome,
-                  perfil: dbUser.perfil || prev.perfil,
-                  status: dbUser.status || prev.status,
-                  disciplinasLecionadas: discs?.map(d => String(d.disciplina_id)) || [],
-                } : null);
-              }
-            });
+            fetchProfile(session.user.email, session.user);
           }
         } else {
           console.log('No active session.');
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Unexpected error in checkSession:', error);
-      } finally {
-        console.log('Auth checkSession flow reached finally.');
-        clearTimeout(timeoutId);
         setIsLoading(false);
+      } finally {
+        clearTimeout(timeoutId);
       }
     };
 
     checkSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state change:', event, session?.user?.email);
       if (session?.user) {
         const basicUser: User = {
@@ -108,34 +120,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           status: 'ativo',
         };
         
-        setUsuario(basicUser);
+        // Só atualiza se o usuário mudou ou se é um evento relevante
+        setUsuario(prev => (prev?.email === basicUser.email) ? prev : basicUser);
 
         if (session.user.email) {
-          const { data: dbUser } = await supabase
-            .from('usuarios')
-            .select('*')
-            .eq('email', session.user.email)
-            .maybeSingle();
-
-          if (dbUser) {
-            const { data: discs } = await supabase
-              .from('professor_disciplinas')
-              .select('disciplina_id')
-              .eq('professor_id', dbUser.id);
-
-            setUsuario(prev => prev ? {
-              ...prev,
-              id: String(dbUser.id),
-              nome: dbUser.nome || prev.nome,
-              perfil: dbUser.perfil || prev.perfil,
-              status: dbUser.status || prev.status,
-              disciplinasLecionadas: discs?.map(d => String(d.disciplina_id)) || [],
-            } : null);
-          }
+          fetchProfile(session.user.email, session.user);
         }
       } else {
         setUsuario(null);
       }
+      setIsLoading(false);
     });
 
     return () => {
