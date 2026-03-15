@@ -35,8 +35,8 @@ const Registro: React.FC = () => {
       await register({ nome, email, senha });
       toast.success('Conta criada com sucesso!');
       navigate('/dashboard');
-    } catch {
-      toast.error('Erro ao criar conta. Email pode já estar em uso.');
+    } catch (error: any) {
+      toast.error('Erro ao criar conta: ' + (error.message || 'Email pode já estar em uso.'));
     } finally {
       setIsLoading(false);
     }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -109,6 +109,13 @@ const Login: React.FC = () => {
           <div className="rounded-lg bg-muted p-3 text-xs text-muted-foreground">
             <p>login: email institucional (@prof.ce.gov.br)</p>
             <p>senha: primeiros 6 digitos do CPF</p>
+          </div>
+
+          <div className="text-center text-sm text-muted-foreground">
+            Ainda não tem conta?{' '}
+            <Link to="/registro" className="text-primary hover:underline font-medium">
+              Cadastre-se aqui
+            </Link>
           </div>
         </CardContent>
       </Card>
