@@ -55,25 +55,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Fetch database profile in background
           if (session.user.email) {
             console.log('Background: Fetching database profile...');
-            supabase
-              .from('usuarios')
-              .select('*')
-              .eq('email', session.user.email)
-              .maybeSingle()
-              .then(({ data: dbUser, error: dbError }) => {
-                if (dbError) {
-                  console.error('Background: Error fetching db profile:', dbError);
-                } else if (dbUser) {
-                  console.log('Background: Database profile found:', dbUser.perfil);
-                  setUsuario(prev => prev ? {
-                    ...prev,
-                    id: String(dbUser.id),
-                    nome: dbUser.nome || prev.nome,
-                    perfil: dbUser.perfil || prev.perfil,
-                    status: dbUser.status || prev.status,
-                  } : null);
-                }
-              });
+            Promise.all([
+              supabase
+                .from('usuarios')
+                .select('*')
+                .eq('email', session.user.email)
+                .maybeSingle(),
+              supabase
+                .from('professor_disciplinas')
+                .select('disciplina_id')
+                .eq('professor_id', (await supabase.from('usuarios').select('id').eq('email', session.user.email).maybeSingle()).data?.id || 0)
+            ]).then(([{ data: dbUser, error: dbError }, { data: discs }]) => {
+              if (dbError) {
+                console.error('Background: Error fetching db profile:', dbError);
+              } else if (dbUser) {
+                console.log('Background: Database profile found:', dbUser.perfil);
+                setUsuario(prev => prev ? {
+                  ...prev,
+                  id: String(dbUser.id),
+                  nome: dbUser.nome || prev.nome,
+                  perfil: dbUser.perfil || prev.perfil,
+                  status: dbUser.status || prev.status,
+                  disciplinasLecionadas: discs?.map(d => String(d.disciplina_id)) || [],
+                } : null);
+              }
+            });
           }
         } else {
           console.log('No active session.');
@@ -90,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state change:', event, session?.user?.email);
       if (session?.user) {
         const basicUser: User = {
@@ -105,22 +111,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUsuario(basicUser);
 
         if (session.user.email) {
-          supabase
+          const { data: dbUser } = await supabase
             .from('usuarios')
             .select('*')
             .eq('email', session.user.email)
-            .maybeSingle()
-            .then(({ data: dbUser }) => {
-              if (dbUser) {
-                setUsuario(prev => prev ? {
-                  ...prev,
-                  id: String(dbUser.id),
-                  nome: dbUser.nome || prev.nome,
-                  perfil: dbUser.perfil || prev.perfil,
-                  status: dbUser.status || prev.status,
-                } : null);
-              }
-            });
+            .maybeSingle();
+
+          if (dbUser) {
+            const { data: discs } = await supabase
+              .from('professor_disciplinas')
+              .select('disciplina_id')
+              .eq('professor_id', dbUser.id);
+
+            setUsuario(prev => prev ? {
+              ...prev,
+              id: String(dbUser.id),
+              nome: dbUser.nome || prev.nome,
+              perfil: dbUser.perfil || prev.perfil,
+              status: dbUser.status || prev.status,
+              disciplinasLecionadas: discs?.map(d => String(d.disciplina_id)) || [],
+            } : null);
+          }
         }
       } else {
         setUsuario(null);

@@ -24,7 +24,8 @@ const DashboardProfessor: React.FC = () => {
   const carregarPlanos = async () => {
     try {
       const data = await planoService.listar();
-      setPlanos(data);
+      const meusPlanos = data.filter(p => String(p.professorId) === String(usuario?.id));
+      setPlanos(meusPlanos);
     } catch {
       toast.error('Erro ao carregar planos.');
     } finally {
