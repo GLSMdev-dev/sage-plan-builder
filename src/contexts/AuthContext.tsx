@@ -20,11 +20,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [googleAuthError, setGoogleAuthError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Safety timeout to ensure app eventually loads even if Supabase hangs
+    const timeoutId = setTimeout(() => {
+      if (isLoading) {
+        console.warn('Auth initialization timed out. Forcing loading to false.');
+        setIsLoading(false);
+      }
+    }, 5000);
+
     // Check current session
     const checkSession = async () => {
+      console.log('Checking Supabase session...');
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Error getting session:', sessionError);
+          return;
+        }
+
         if (session?.user) {
+          console.log('Session found for:', session.user.email);
           let user: User = {
             id: session.user.id,
             nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
@@ -35,13 +51,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
 
           if (session.user.email) {
+            console.log('Fetching database profile...');
             const { data: dbUser, error: dbError } = await supabase
               .from('usuarios')
               .select('*')
               .eq('email', session.user.email)
               .maybeSingle();
 
-            if (!dbError && dbUser) {
+            if (dbError) {
+              console.error('Error fetching db profile:', dbError);
+            } else if (dbUser) {
+              console.log('Database profile found:', dbUser.perfil);
               user = {
                 ...user,
                 id: String(dbUser.id),
@@ -49,13 +69,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 perfil: dbUser.perfil || user.perfil,
                 status: dbUser.status || user.status,
               };
+            } else {
+              console.warn('No database profile found for this email.');
             }
           }
           setUsuario(user);
+        } else {
+          console.log('No active session.');
         }
       } catch (error) {
-        console.error('Erro ao verificar sessão:', error);
+        console.error('Unexpected error in checkSession:', error);
       } finally {
+        console.log('Auth initialization complete.');
+        clearTimeout(timeoutId);
         setIsLoading(false);
       }
     };
@@ -63,7 +89,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', event, session?.user?.email);
       if (session?.user) {
         let user: User = {
           id: session.user.id,
@@ -98,6 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => {
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []);
