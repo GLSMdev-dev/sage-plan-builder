@@ -22,26 +22,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Check current session
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        // Buscar perfil real no banco de dados para garantir o ID e Perfil corretos
-        const { data: dbUser } = await supabase
-          .from('usuarios')
-          .select('*')
-          .eq('email', session.user.email)
-          .maybeSingle();
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          let user: User = {
+            id: session.user.id,
+            nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
+            email: session.user.email || '',
+            usuario: session.user.user_metadata.usuario || session.user.email?.split('@')[0] || '',
+            perfil: session.user.user_metadata.perfil || 'professor',
+            status: 'ativo',
+          };
 
-        const user: User = {
-          id: dbUser ? String(dbUser.id) : session.user.id,
-          nome: dbUser?.nome || session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
-          email: session.user.email || '',
-          usuario: session.user.user_metadata.usuario || session.user.email?.split('@')[0] || '',
-          perfil: dbUser?.perfil || session.user.user_metadata.perfil || 'professor',
-          status: dbUser?.status || 'ativo',
-        };
-        setUsuario(user);
+          if (session.user.email) {
+            const { data: dbUser, error: dbError } = await supabase
+              .from('usuarios')
+              .select('*')
+              .eq('email', session.user.email)
+              .maybeSingle();
+
+            if (!dbError && dbUser) {
+              user = {
+                ...user,
+                id: String(dbUser.id),
+                nome: dbUser.nome || user.nome,
+                perfil: dbUser.perfil || user.perfil,
+                status: dbUser.status || user.status,
+              };
+            }
+          }
+          setUsuario(user);
+        }
+      } catch (error) {
+        console.error('Erro ao verificar sessão:', error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     checkSession();
@@ -49,20 +65,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        const { data: dbUser } = await supabase
-          .from('usuarios')
-          .select('*')
-          .eq('email', session.user.email)
-          .maybeSingle();
-
-        const user: User = {
-          id: dbUser ? String(dbUser.id) : session.user.id,
-          nome: dbUser?.nome || session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
+        let user: User = {
+          id: session.user.id,
+          nome: session.user.user_metadata.nome || session.user.email?.split('@')[0] || '',
           email: session.user.email || '',
           usuario: session.user.user_metadata.usuario || session.user.email?.split('@')[0] || '',
-          perfil: dbUser?.perfil || session.user.user_metadata.perfil || 'professor',
-          status: dbUser?.status || 'ativo',
+          perfil: session.user.user_metadata.perfil || 'professor',
+          status: 'ativo',
         };
+
+        if (session.user.email) {
+          const { data: dbUser } = await supabase
+            .from('usuarios')
+            .select('*')
+            .eq('email', session.user.email)
+            .maybeSingle();
+
+          if (dbUser) {
+            user = {
+              ...user,
+              id: String(dbUser.id),
+              nome: dbUser.nome || user.nome,
+              perfil: dbUser.perfil || user.perfil,
+              status: dbUser.status || user.status,
+            };
+          }
+        }
         setUsuario(user);
       } else {
         setUsuario(null);
