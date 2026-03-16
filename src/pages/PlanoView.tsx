@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { PlanoAula, planoService } from '@/services/planoService';
-import { formatMesAno, formatDate } from '@/utils/formatters';
+import { formatMesAno } from '@/utils/formatters';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Pencil, Printer } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -31,17 +30,12 @@ const PlanoView: React.FC = () => {
     if (!id) return;
     planoService.buscarPorId(id)
       .then(setPlano)
-      .catch(() => {
-        toast.error('Plano não encontrado.');
-        navigate('/dashboard');
-      })
+      .catch(() => { toast.error('Plano não encontrado.'); navigate('/dashboard'); })
       .finally(() => setIsLoading(false));
   }, [id]);
 
   useEffect(() => {
-    if (plano && searchParams.get('print') === 'true') {
-      setTimeout(() => window.print(), 500);
-    }
+    if (plano && searchParams.get('print') === 'true') setTimeout(() => window.print(), 500);
   }, [plano, searchParams]);
 
   const isProfessorDono = usuario?.perfil === 'professor' && usuario.id === plano?.professorId;
@@ -64,23 +58,20 @@ const PlanoView: React.FC = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="mx-auto max-w-4xl px-4 sm:px-6 py-6 sm:py-8 print:px-0 print:py-0 print:max-w-none">
-        {/* Ações (escondidas na impressão) */}
+        {/* Ações */}
         <div className="flex items-center justify-between mb-6 print:hidden">
           <Button variant="ghost" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
+            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
           </Button>
           <div className="flex gap-2">
             {isProfessorDono && (
               <Button onClick={() => navigate(`/planos/${plano._id}/editar`)}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Editar
+                <Pencil className="mr-2 h-4 w-4" /> Editar
               </Button>
             )}
             {(isGestor || isProfessorDono) && (
               <Button variant="outline" onClick={() => window.print()}>
-                <Printer className="mr-2 h-4 w-4" />
-                Imprimir
+                <Printer className="mr-2 h-4 w-4" /> Imprimir
               </Button>
             )}
           </div>
@@ -94,18 +85,18 @@ const PlanoView: React.FC = () => {
             <p>Escola de Ensino Médio em Tempo Integral Filgueiras Lima – INEP: 23142804</p>
           </div>
           <h1 className="mt-2 text-[10pt] font-bold border-y-2 border-black py-1 print:text-[8pt] print:py-0.5">
-            PLANO DE AULA
+            PLANO DE AULA MENSAL
           </h1>
         </div>
 
-        {/* Status (apenas tela) */}
+        {/* Status */}
         <div className="mb-6 flex justify-end print:hidden">
           <Badge variant={plano.status === 'finalizado' ? 'default' : 'secondary'}>
             {plano.status === 'finalizado' ? 'Finalizado' : 'Rascunho'}
           </Badge>
         </div>
 
-        {/* 1. Identificação da Aula */}
+        {/* 1. Identificação */}
         <Section number={1} title="Identificação da Aula">
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm print:text-[8pt]">
             <div className="flex gap-1">
@@ -140,79 +131,58 @@ const PlanoView: React.FC = () => {
         </Section>
 
         {/* 2. Objetivos */}
-        {plano.objetivos && (
-          <Section number={2} title="Objetivos da Aula">
-            {plano.objetivos}
-          </Section>
-        )}
+        {plano.objetivos && <Section number={2} title="Objetivos da Aula">{plano.objetivos}</Section>}
 
-        {/* 3. Conteúdo Programático */}
-        {plano.conteudo && (
-          <Section number={3} title="Conteúdo(s) Programático(s)">
-            {plano.conteudo}
-          </Section>
-        )}
+        {/* 3. Conteúdo */}
+        {plano.conteudo && <Section number={3} title="Conteúdo(s) Programático(s)">{plano.conteudo}</Section>}
 
-        {/* 4. Metodologia */}
-        {(plano.metodologiaAbertura || plano.metodologiaDesenvolvimento || plano.metodologiaFechamento) && (
+        {/* 4. Metodologia — Semanal */}
+        {plano.semanas.length > 0 && (
           <Section number={4} title="Metodologia">
-            <div className="space-y-3">
-              {plano.metodologiaAbertura && (
-                <div>
-                  <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Abertura</p>
-                  <p>{plano.metodologiaAbertura}</p>
+            <div className="space-y-4">
+              {plano.semanas.map((semana, index) => (
+                <div key={index} className="rounded-lg border p-3 print:border-black print:p-2 print:break-inside-avoid">
+                  <h5 className="font-bold text-sm mb-2 print:text-[8pt]">Semana {semana.numero}</h5>
+                  <div className="space-y-2">
+                    {semana.abertura && (
+                      <div>
+                        <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Abertura</p>
+                        <p>{semana.abertura}</p>
+                      </div>
+                    )}
+                    {semana.desenvolvimento && (
+                      <div>
+                        <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Desenvolvimento</p>
+                        <p>{semana.desenvolvimento}</p>
+                      </div>
+                    )}
+                    {semana.fechamento && (
+                      <div>
+                        <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Fechamento</p>
+                        <p>{semana.fechamento}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-              {plano.metodologiaDesenvolvimento && (
-                <div>
-                  <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Desenvolvimento</p>
-                  <p>{plano.metodologiaDesenvolvimento}</p>
-                </div>
-              )}
-              {plano.metodologiaFechamento && (
-                <div>
-                  <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Fechamento</p>
-                  <p>{plano.metodologiaFechamento}</p>
-                </div>
-              )}
+              ))}
             </div>
           </Section>
         )}
 
-        {/* 5. Recursos Didáticos */}
-        {plano.recursos && (
-          <Section number={5} title="Recursos Didáticos">
-            {plano.recursos}
-          </Section>
-        )}
+        {/* 5. Recursos */}
+        {plano.recursos && <Section number={5} title="Recursos Didáticos">{plano.recursos}</Section>}
 
         {/* 6. Avaliação */}
-        {plano.avaliacao && (
-          <Section number={6} title="Avaliação">
-            {plano.avaliacao}
-          </Section>
-        )}
+        {plano.avaliacao && <Section number={6} title="Avaliação">{plano.avaliacao}</Section>}
 
         {/* 7. Referências */}
-        {plano.referencias && (
-          <Section number={7} title="Referências">
-            {plano.referencias}
-          </Section>
-        )}
+        {plano.referencias && <Section number={7} title="Referências">{plano.referencias}</Section>}
 
-        {/* Assinaturas e Rodapé de Impressão */}
+        {/* Assinaturas */}
         <div className="hidden print:block mt-24 mb-12">
           <div className="grid grid-cols-2 gap-16 mb-20">
-            <div className="text-center">
-              <div className="border-t border-black pt-1 text-[10pt] font-medium">
-                Assinatura do Professor
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="border-t border-black pt-1 text-[10pt] font-medium">
-                Assinatura da Coordenação
-              </div>
-            </div>
+            <div className="text-center"><div className="border-t border-black pt-1 text-[10pt] font-medium">Assinatura do Professor</div></div>
+            <div className="text-center"><div className="border-t border-black pt-1 text-[10pt] font-medium">Assinatura da Coordenação</div></div>
           </div>
           <div className="print:fixed print:bottom-1 print:left-0 print:right-0 pt-1 border-t border-black text-[8pt] text-center space-y-0.5 font-medium bg-white">
             <p>Rua Vereador Nelson de Sousa Alencar, sn – Veneza | Iguatu – Ceará | CEP: 63.504-356 - Fone: (88) 3581.9463</p>

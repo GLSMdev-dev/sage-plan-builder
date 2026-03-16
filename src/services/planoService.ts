@@ -1,54 +1,59 @@
 import { supabase } from '../lib/supabase';
 
+export interface SemanaMetodologia {
+  numero: number;
+  abertura: string;
+  desenvolvimento: string;
+  fechamento: string;
+}
+
 export interface PlanoAula {
   _id?: string;
   professorId: string;
   professorNome: string;
-  disciplina: string;       // Componente Curricular
-  turma: string;            // Série/Turma(s)
+  disciplina: string;
+  turma: string;
   mesAno: string;
-  tema: string;             // Tema da aula
-  qtdAulas: string;         // Ex: "08 aulas / 400 minutos"
-  objetivos: string;        // Objetivos da Aula
-  conteudo: string;         // Conteúdo(s) Programático(s)
-  metodologiaAbertura: string;
-  metodologiaDesenvolvimento: string;
-  metodologiaFechamento: string;
-  recursos: string;         // Recursos Didáticos
-  avaliacao: string;        // Avaliação
-  referencias: string;      // Referências
+  tema: string;
+  qtdAulas: string;
+  objetivos: string;
+  conteudo: string;
+  semanas: SemanaMetodologia[];
+  recursos: string;
+  avaliacao: string;
+  referencias: string;
   status: 'rascunho' | 'finalizado';
   criadoEm?: string;
   atualizadoEm?: string;
 }
 
-// Extended metadata stored in plano_semanas row (numero=0)
 interface ExtendedMeta {
   tema: string;
   qtdAulas: string;
-  metodologiaAbertura: string;
-  metodologiaDesenvolvimento: string;
-  metodologiaFechamento: string;
   referencias: string;
 }
 
 const mapPlano = (p: any): PlanoAula => {
-  // Extract extended metadata from semanas (row with numero=0)
-  const metaRow = (p.semanas || []).find((s: any) => s.numero === 0);
-  let meta: ExtendedMeta = {
-    tema: '',
-    qtdAulas: '',
-    metodologiaAbertura: '',
-    metodologiaDesenvolvimento: '',
-    metodologiaFechamento: '',
-    referencias: '',
-  };
+  const rows = p.semanas || [];
+  const metaRow = rows.find((s: any) => s.numero === 0);
+  let meta: ExtendedMeta = { tema: '', qtdAulas: '', referencias: '' };
 
   if (metaRow) {
-    try {
-      meta = { ...meta, ...JSON.parse(metaRow.metodologia) };
-    } catch { /* ignore */ }
+    try { meta = { ...meta, ...JSON.parse(metaRow.metodologia) }; } catch { /* ignore */ }
   }
+
+  // Weekly methodology rows (numero >= 1)
+  const semanas: SemanaMetodologia[] = rows
+    .filter((s: any) => s.numero >= 1)
+    .sort((a: any, b: any) => a.numero - b.numero)
+    .map((s: any) => {
+      try {
+        const parsed = JSON.parse(s.metodologia);
+        return { numero: s.numero, abertura: parsed.abertura || '', desenvolvimento: parsed.desenvolvimento || '', fechamento: parsed.fechamento || '' };
+      } catch {
+        return { numero: s.numero, abertura: s.metodologia || '', desenvolvimento: '', fechamento: '' };
+      }
+    });
 
   return {
     _id: String(p.id),
@@ -61,9 +66,7 @@ const mapPlano = (p: any): PlanoAula => {
     qtdAulas: meta.qtdAulas,
     objetivos: p.objetivos || '',
     conteudo: p.conteudo || '',
-    metodologiaAbertura: meta.metodologiaAbertura,
-    metodologiaDesenvolvimento: meta.metodologiaDesenvolvimento,
-    metodologiaFechamento: meta.metodologiaFechamento,
+    semanas: semanas.length ? semanas : [{ numero: 1, abertura: '', desenvolvimento: '', fechamento: '' }],
     recursos: metaRow?.recursos || '',
     avaliacao: p.avaliacao || '',
     referencias: meta.referencias,
@@ -73,21 +76,27 @@ const mapPlano = (p: any): PlanoAula => {
   };
 };
 
-const buildMetaRow = (plano: Partial<PlanoAula>, planoId: number) => {
+const buildSemanaRows = (plano: Partial<PlanoAula>, planoId: number) => {
   const metaJson: ExtendedMeta = {
     tema: plano.tema || '',
     qtdAulas: plano.qtdAulas || '',
-    metodologiaAbertura: plano.metodologiaAbertura || '',
-    metodologiaDesenvolvimento: plano.metodologiaDesenvolvimento || '',
-    metodologiaFechamento: plano.metodologiaFechamento || '',
     referencias: plano.referencias || '',
   };
-  return {
-    plano_id: planoId,
-    numero: 0,
-    metodologia: JSON.stringify(metaJson),
-    recursos: plano.recursos || '',
-  };
+
+  const rows = [
+    { plano_id: planoId, numero: 0, metodologia: JSON.stringify(metaJson), recursos: plano.recursos || '' },
+  ];
+
+  (plano.semanas || []).forEach(s => {
+    rows.push({
+      plano_id: planoId,
+      numero: s.numero,
+      metodologia: JSON.stringify({ abertura: s.abertura, desenvolvimento: s.desenvolvimento, fechamento: s.fechamento }),
+      recursos: '',
+    });
+  });
+
+  return rows;
 };
 
 export const planoService = {
@@ -95,7 +104,6 @@ export const planoService = {
     const { data, error } = await supabase
       .from('planos_aula')
       .select('*, semanas:plano_semanas(*)');
-    
     if (error) throw error;
     return (data || []).map(mapPlano);
   },
@@ -106,7 +114,6 @@ export const planoService = {
       .select('*, semanas:plano_semanas(*)')
       .eq('id', id)
       .single();
-    
     if (error) throw error;
     return mapPlano(data);
   },
@@ -130,14 +137,11 @@ export const planoService = {
 
     if (error) throw error;
 
-    // Store extended metadata as a plano_semana row with numero=0
-    const metaRow = buildMetaRow(plano, data.id);
-    const { error: metaError } = await supabase
-      .from('plano_semanas')
-      .insert(metaRow);
-    if (metaError) throw metaError;
+    const semanaRows = buildSemanaRows(plano, data.id);
+    const { error: semError } = await supabase.from('plano_semanas').insert(semanaRows);
+    if (semError) throw semError;
 
-    return mapPlano({ ...data, semanas: [metaRow] });
+    return mapPlano({ ...data, semanas: semanaRows });
   },
 
   atualizar: async (id: string, plano: Partial<PlanoAula>): Promise<PlanoAula> => {
@@ -159,12 +163,12 @@ export const planoService = {
 
     if (error) throw error;
 
-    // Update extended metadata: delete old row and insert new
-    await supabase.from('plano_semanas').delete().eq('plano_id', Number(id)).eq('numero', 0);
-    const metaRow = buildMetaRow(plano, Number(id));
-    await supabase.from('plano_semanas').insert(metaRow);
+    // Replace all semana rows
+    await supabase.from('plano_semanas').delete().eq('plano_id', Number(id));
+    const semanaRows = buildSemanaRows(plano, Number(id));
+    await supabase.from('plano_semanas').insert(semanaRows);
 
-    return mapPlano({ ...data, semanas: [metaRow] });
+    return mapPlano({ ...data, semanas: semanaRows });
   },
 
   excluir: async (id: string): Promise<void> => {
