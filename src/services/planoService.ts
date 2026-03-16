@@ -1,42 +1,94 @@
 import { supabase } from '../lib/supabase';
 
-export interface Semana {
-  numero: number;
-  metodologia: string;
-  recursos: string;
-}
-
 export interface PlanoAula {
   _id?: string;
   professorId: string;
   professorNome: string;
-  disciplina: string;
-  turma: string;
+  disciplina: string;       // Componente Curricular
+  turma: string;            // Série/Turma(s)
   mesAno: string;
-  objetivos: string;
-  conteudo: string;
-  avaliacao: string;
-  semanas: Semana[];
+  tema: string;             // Tema da aula
+  qtdAulas: string;         // Ex: "08 aulas / 400 minutos"
+  objetivos: string;        // Objetivos da Aula
+  conteudo: string;         // Conteúdo(s) Programático(s)
+  metodologiaAbertura: string;
+  metodologiaDesenvolvimento: string;
+  metodologiaFechamento: string;
+  recursos: string;         // Recursos Didáticos
+  avaliacao: string;        // Avaliação
+  referencias: string;      // Referências
   status: 'rascunho' | 'finalizado';
   criadoEm?: string;
   atualizadoEm?: string;
 }
 
-const mapPlano = (p: any): PlanoAula => ({
-  _id: String(p.id),
-  professorId: p.professor_id,
-  professorNome: p.professor_nome,
-  disciplina: p.disciplina_nome,
-  turma: p.turma,
-  mesAno: p.mes_ano,
-  objetivos: p.objetivos || '',
-  conteudo: p.conteudo || '',
-  avaliacao: p.avaliacao || '',
-  semanas: p.semanas || [],
-  status: p.status,
-  criadoEm: p.criado_em,
-  atualizadoEm: p.atualizado_em,
-});
+// Extended metadata stored in plano_semanas row (numero=0)
+interface ExtendedMeta {
+  tema: string;
+  qtdAulas: string;
+  metodologiaAbertura: string;
+  metodologiaDesenvolvimento: string;
+  metodologiaFechamento: string;
+  referencias: string;
+}
+
+const mapPlano = (p: any): PlanoAula => {
+  // Extract extended metadata from semanas (row with numero=0)
+  const metaRow = (p.semanas || []).find((s: any) => s.numero === 0);
+  let meta: ExtendedMeta = {
+    tema: '',
+    qtdAulas: '',
+    metodologiaAbertura: '',
+    metodologiaDesenvolvimento: '',
+    metodologiaFechamento: '',
+    referencias: '',
+  };
+
+  if (metaRow) {
+    try {
+      meta = { ...meta, ...JSON.parse(metaRow.metodologia) };
+    } catch { /* ignore */ }
+  }
+
+  return {
+    _id: String(p.id),
+    professorId: p.professor_id,
+    professorNome: p.professor_nome,
+    disciplina: p.disciplina_nome,
+    turma: p.turma,
+    mesAno: p.mes_ano,
+    tema: meta.tema,
+    qtdAulas: meta.qtdAulas,
+    objetivos: p.objetivos || '',
+    conteudo: p.conteudo || '',
+    metodologiaAbertura: meta.metodologiaAbertura,
+    metodologiaDesenvolvimento: meta.metodologiaDesenvolvimento,
+    metodologiaFechamento: meta.metodologiaFechamento,
+    recursos: metaRow?.recursos || '',
+    avaliacao: p.avaliacao || '',
+    referencias: meta.referencias,
+    status: p.status,
+    criadoEm: p.criado_em,
+    atualizadoEm: p.atualizado_em,
+  };
+};
+
+const buildMetaRow = (plano: Partial<PlanoAula>, planoId: number) => {
+  const metaJson: ExtendedMeta = {
+    tema: plano.tema || '',
+    qtdAulas: plano.qtdAulas || '',
+    metodologiaAbertura: plano.metodologiaAbertura || '',
+    metodologiaDesenvolvimento: plano.metodologiaDesenvolvimento || '',
+    metodologiaFechamento: plano.metodologiaFechamento || '',
+    referencias: plano.referencias || '',
+  };
+  return {
+    plano_id: planoId,
+    numero: 0,
+    metodologia: JSON.stringify(metaJson),
+    recursos: plano.recursos || '',
+  };
+};
 
 export const planoService = {
   listar: async (): Promise<PlanoAula[]> => {
@@ -60,50 +112,43 @@ export const planoService = {
   },
 
   criar: async (plano: Omit<PlanoAula, '_id' | 'criadoEm' | 'atualizadoEm'>): Promise<PlanoAula> => {
-    const { semanas, ...rest } = plano;
     const { data, error } = await supabase
       .from('planos_aula')
       .insert({
-        professor_id: rest.professorId,
-        professor_nome: rest.professorNome,
-        disciplina_nome: rest.disciplina,
-        turma: rest.turma,
-        mes_ano: rest.mesAno,
-        objetivos: rest.objetivos,
-        conteudo: rest.conteudo,
-        avaliacao: rest.avaliacao,
-        status: rest.status,
+        professor_id: plano.professorId,
+        professor_nome: plano.professorNome,
+        disciplina_nome: plano.disciplina,
+        turma: plano.turma,
+        mes_ano: plano.mesAno,
+        objetivos: plano.objetivos,
+        conteudo: plano.conteudo,
+        avaliacao: plano.avaliacao,
+        status: plano.status,
       })
       .select()
       .single();
 
     if (error) throw error;
 
-    if (semanas?.length) {
-      const { error: semError } = await supabase
-        .from('plano_semanas')
-        .insert(semanas.map(s => ({
-          numero: s.numero,
-          metodologia: s.metodologia,
-          recursos: s.recursos,
-          plano_id: data.id 
-        })));
-      if (semError) throw semError;
-    }
+    // Store extended metadata as a plano_semana row with numero=0
+    const metaRow = buildMetaRow(plano, data.id);
+    const { error: metaError } = await supabase
+      .from('plano_semanas')
+      .insert(metaRow);
+    if (metaError) throw metaError;
 
-    return mapPlano({ ...data, semanas });
+    return mapPlano({ ...data, semanas: [metaRow] });
   },
 
   atualizar: async (id: string, plano: Partial<PlanoAula>): Promise<PlanoAula> => {
-    const { semanas, ...rest } = plano;
     const updateData: any = {};
-    if (rest.disciplina) updateData.disciplina_nome = rest.disciplina;
-    if (rest.turma) updateData.turma = rest.turma;
-    if (rest.mesAno) updateData.mes_ano = rest.mesAno;
-    if (rest.objetivos !== undefined) updateData.objetivos = rest.objetivos;
-    if (rest.conteudo !== undefined) updateData.conteudo = rest.conteudo;
-    if (rest.avaliacao !== undefined) updateData.avaliacao = rest.avaliacao;
-    if (rest.status) updateData.status = rest.status;
+    if (plano.disciplina) updateData.disciplina_nome = plano.disciplina;
+    if (plano.turma) updateData.turma = plano.turma;
+    if (plano.mesAno) updateData.mes_ano = plano.mesAno;
+    if (plano.objetivos !== undefined) updateData.objetivos = plano.objetivos;
+    if (plano.conteudo !== undefined) updateData.conteudo = plano.conteudo;
+    if (plano.avaliacao !== undefined) updateData.avaliacao = plano.avaliacao;
+    if (plano.status) updateData.status = plano.status;
 
     const { data, error } = await supabase
       .from('planos_aula')
@@ -113,10 +158,13 @@ export const planoService = {
       .single();
 
     if (error) throw error;
-    
-    // Simplificando: em uma atualização de plano completo, poderíamos deletar e reinserir semanas
-    // ou fazer um upsert. Para este fix, focamos na correção do mapeamento de leitura.
-    return mapPlano(data);
+
+    // Update extended metadata: delete old row and insert new
+    await supabase.from('plano_semanas').delete().eq('plano_id', Number(id)).eq('numero', 0);
+    const metaRow = buildMetaRow(plano, Number(id));
+    await supabase.from('plano_semanas').insert(metaRow);
+
+    return mapPlano({ ...data, semanas: [metaRow] });
   },
 
   excluir: async (id: string): Promise<void> => {
