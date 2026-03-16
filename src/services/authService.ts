@@ -9,7 +9,7 @@ export interface User {
   id: string;
   nome: string;
   email: string;
-  usuario: string;
+  usuario?: string;
   cpf?: string;
   perfil: 'professor' | 'gestor';
   status?: 'ativo' | 'inativo';
