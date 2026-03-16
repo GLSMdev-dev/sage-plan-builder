@@ -10,6 +10,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Pencil, Printer } from 'lucide-react';
 import { toast } from 'sonner';
 
+const Section: React.FC<{ number: number; title: string; children: React.ReactNode }> = ({ number, title, children }) => (
+  <div className="mb-4 print:mb-2 print:break-inside-avoid">
+    <h4 className="text-base font-bold print:text-[9pt] print:leading-tight mb-1 border-b border-muted pb-1 print:border-black">
+      {number}. {title}
+    </h4>
+    <div className="text-sm print:text-[9pt] whitespace-pre-wrap">{children}</div>
+  </div>
+);
+
 const PlanoView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -29,7 +38,6 @@ const PlanoView: React.FC = () => {
       .finally(() => setIsLoading(false));
   }, [id]);
 
-  // Auto-print se parâmetro print=true
   useEffect(() => {
     if (plano && searchParams.get('print') === 'true') {
       setTimeout(() => window.print(), 500);
@@ -78,7 +86,7 @@ const PlanoView: React.FC = () => {
           </div>
         </div>
 
-        {/* Cabeçalho Institucional (Visível na tela e impressão) */}
+        {/* Cabeçalho Institucional */}
         <div className="mb-6 pt-4 text-center border-b pb-4 print:border-none print:pt-4">
           <img src="/logo-escola.png" alt="Logo Escola" className="w-full h-auto max-h-20 object-contain mx-auto mb-2" />
           <div className="space-y-0 text-[8pt] font-semibold uppercase leading-tight text-muted-foreground print:text-black">
@@ -86,89 +94,114 @@ const PlanoView: React.FC = () => {
             <p>Escola de Ensino Médio em Tempo Integral Filgueiras Lima – INEP: 23142804</p>
           </div>
           <h1 className="mt-2 text-[10pt] font-bold border-y-2 border-black py-1 print:text-[8pt] print:py-0.5">
-            PLANO DE AULA MENSAL
+            PLANO DE AULA
           </h1>
-          
-          <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-left text-sm print:text-[7pt] print:gap-y-0 print:mt-1.5">
-            <div className="flex gap-1">
-              <span className="font-bold whitespace-nowrap">DISCIPLINA:</span>
-              <span className="uppercase">{plano.disciplina}</span>
-            </div>
-            <div className="flex gap-1">
-              <span className="font-bold whitespace-nowrap">SÉRIE:</span>
-              <span className="uppercase">{plano.turma}</span>
-            </div>
-            <div className="flex gap-1">
-              <span className="font-bold whitespace-nowrap">MÊS:</span>
-              <span className="uppercase">{formatMesAno(plano.mesAno)}</span>
-            </div>
-            <div className="flex gap-1">
-              <span className="font-bold whitespace-nowrap">PROFESSOR:</span>
-              <span className="uppercase">{plano.professorNome}</span>
-            </div>
-          </div>
         </div>
 
-        {/* Informações de Status (apenas tela) */}
+        {/* Status (apenas tela) */}
         <div className="mb-6 flex justify-end print:hidden">
-          <Badge
-            variant={plano.status === 'finalizado' ? 'default' : 'secondary'}
-          >
+          <Badge variant={plano.status === 'finalizado' ? 'default' : 'secondary'}>
             {plano.status === 'finalizado' ? 'Finalizado' : 'Rascunho'}
           </Badge>
         </div>
 
-        {/* Informações do plano */}
-        <div className="space-y-3 mb-4 print:mb-2 print:space-y-1">
-          {plano.objetivos && (
-            <div className="print:border-b print:border-black print:pb-1">
-              <h4 className="text-base font-bold print:text-[9pt] print:leading-tight">Objetivos</h4>
-              <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{plano.objetivos}</p>
+        {/* 1. Identificação da Aula */}
+        <Section number={1} title="Identificação da Aula">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm print:text-[8pt]">
+            <div className="flex gap-1">
+              <span className="font-bold whitespace-nowrap">Componente Curricular:</span>
+              <span className="uppercase">{plano.disciplina}</span>
             </div>
-          )}
-          {plano.conteudo && (
-            <div className="print:border-b print:border-black print:pb-1">
-              <h4 className="text-base font-bold print:text-[9pt] print:leading-tight">Conteúdo Programático</h4>
-              <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{plano.conteudo}</p>
+            <div className="flex gap-1">
+              <span className="font-bold whitespace-nowrap">Série/Turma(s):</span>
+              <span className="uppercase">{plano.turma}</span>
             </div>
-          )}
-          {plano.avaliacao && (
-            <div className="print:border-b print:border-black print:pb-1">
-              <h4 className="text-base font-bold print:text-[9pt] print:leading-tight">Avaliação</h4>
-              <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{plano.avaliacao}</p>
+            <div className="flex gap-1">
+              <span className="font-bold whitespace-nowrap">Mês/Ano:</span>
+              <span className="uppercase">{formatMesAno(plano.mesAno)}</span>
             </div>
-          )}
-        </div>
-
-        {/* Semanas */}
-        <h3 className="text-lg font-bold mb-4 print:text-[10pt] print:mb-1">Estrutura Semanal</h3>
-        <div className="space-y-4 print:space-y-1">
-          {plano.semanas.map((semana, index) => (
-            <div key={index} className="print:border print:border-black print:p-1 print:break-inside-avoid">
-              <h4 className="text-base font-bold print:text-[9pt] print:mb-0.5">
-                Semana {semana.numero}
-              </h4>
-              <div className="grid grid-cols-1 print:grid-cols-2 print:gap-4">
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 print:text-[7pt] print:mb-0 print:text-black">
-                    Metodologia
-                  </p>
-                  <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{semana.metodologia}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1 print:text-[7pt] print:mb-0 print:text-black">
-                    Recursos
-                  </p>
-                  <p className="text-sm print:text-[9pt] whitespace-pre-wrap">{semana.recursos}</p>
-                </div>
+            <div className="flex gap-1">
+              <span className="font-bold whitespace-nowrap">Professor(a):</span>
+              <span className="uppercase">{plano.professorNome}</span>
+            </div>
+            {plano.qtdAulas && (
+              <div className="flex gap-1">
+                <span className="font-bold whitespace-nowrap">Qtd. Aulas / Tempo:</span>
+                <span>{plano.qtdAulas}</span>
               </div>
+            )}
+            {plano.tema && (
+              <div className="flex gap-1 col-span-2">
+                <span className="font-bold whitespace-nowrap">Tema da Aula:</span>
+                <span>{plano.tema}</span>
+              </div>
+            )}
+          </div>
+        </Section>
+
+        {/* 2. Objetivos */}
+        {plano.objetivos && (
+          <Section number={2} title="Objetivos da Aula">
+            {plano.objetivos}
+          </Section>
+        )}
+
+        {/* 3. Conteúdo Programático */}
+        {plano.conteudo && (
+          <Section number={3} title="Conteúdo(s) Programático(s)">
+            {plano.conteudo}
+          </Section>
+        )}
+
+        {/* 4. Metodologia */}
+        {(plano.metodologiaAbertura || plano.metodologiaDesenvolvimento || plano.metodologiaFechamento) && (
+          <Section number={4} title="Metodologia">
+            <div className="space-y-3">
+              {plano.metodologiaAbertura && (
+                <div>
+                  <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Abertura</p>
+                  <p>{plano.metodologiaAbertura}</p>
+                </div>
+              )}
+              {plano.metodologiaDesenvolvimento && (
+                <div>
+                  <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Desenvolvimento</p>
+                  <p>{plano.metodologiaDesenvolvimento}</p>
+                </div>
+              )}
+              {plano.metodologiaFechamento && (
+                <div>
+                  <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground print:text-black mb-0.5">Fechamento</p>
+                  <p>{plano.metodologiaFechamento}</p>
+                </div>
+              )}
             </div>
-          ))}
-        </div>
+          </Section>
+        )}
+
+        {/* 5. Recursos Didáticos */}
+        {plano.recursos && (
+          <Section number={5} title="Recursos Didáticos">
+            {plano.recursos}
+          </Section>
+        )}
+
+        {/* 6. Avaliação */}
+        {plano.avaliacao && (
+          <Section number={6} title="Avaliação">
+            {plano.avaliacao}
+          </Section>
+        )}
+
+        {/* 7. Referências */}
+        {plano.referencias && (
+          <Section number={7} title="Referências">
+            {plano.referencias}
+          </Section>
+        )}
 
         {/* Assinaturas e Rodapé de Impressão */}
         <div className="hidden print:block mt-24 mb-12">
-          {/* Espaço para Assinaturas */}
           <div className="grid grid-cols-2 gap-16 mb-20">
             <div className="text-center">
               <div className="border-t border-black pt-1 text-[10pt] font-medium">
@@ -181,18 +214,10 @@ const PlanoView: React.FC = () => {
               </div>
             </div>
           </div>
-
-          {/* Informações Institucionais - Posicionado no rodapé da página */}
           <div className="print:fixed print:bottom-1 print:left-0 print:right-0 pt-1 border-t border-black text-[8pt] text-center space-y-0.5 font-medium bg-white">
-            <p>
-              Rua Vereador Nelson de Sousa Alencar, sn – Veneza | Iguatu – Ceará | CEP: 63.504-356 - Fone: (88) 3581.9463
-            </p>
-            <p>
-              E-mail: filgueiraslimacrede16@escola.ce.gov.br | Instagram: @filgueiraslimaiguatu
-            </p>
-            <p className="text-[7pt] italic">
-              Documento gerado em {new Date().toLocaleDateString('pt-BR')} via SAGE
-            </p>
+            <p>Rua Vereador Nelson de Sousa Alencar, sn – Veneza | Iguatu – Ceará | CEP: 63.504-356 - Fone: (88) 3581.9463</p>
+            <p>E-mail: filgueiraslimacrede16@escola.ce.gov.br | Instagram: @filgueiraslimaiguatu</p>
+            <p className="text-[7pt] italic">Documento gerado em {new Date().toLocaleDateString('pt-BR')} via SAGE</p>
           </div>
         </div>
       </main>

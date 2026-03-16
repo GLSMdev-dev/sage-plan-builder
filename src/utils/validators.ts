@@ -6,17 +6,19 @@ export const loginSchema = z.object({
 });
 
 export const planoAulaSchema = z.object({
-  disciplina: z.string().trim().min(1, 'Disciplina é obrigatória').max(100),
-  turma: z.string().trim().min(1, 'Turma é obrigatória').max(50),
+  disciplina: z.string().trim().min(1, 'Componente curricular é obrigatório').max(100),
+  turma: z.string().trim().min(1, 'Série/Turma é obrigatória').max(50),
   mesAno: z.string().regex(/^\d{4}-\d{2}$/, 'Formato inválido (use AAAA-MM)'),
+  tema: z.string().trim().min(1, 'Tema da aula é obrigatório').max(500),
+  qtdAulas: z.string().trim().min(1, 'Qtd. de aulas é obrigatória').max(100),
   objetivos: z.string().trim().min(1, 'Objetivos são obrigatórios').max(2000),
-  conteudo: z.string().trim().min(1, 'Conteúdo é obrigatório').max(2000),
+  conteudo: z.string().trim().min(1, 'Conteúdo programático é obrigatório').max(2000),
+  metodologiaAbertura: z.string().trim().min(1, 'Metodologia de abertura é obrigatória').max(2000),
+  metodologiaDesenvolvimento: z.string().trim().min(1, 'Metodologia de desenvolvimento é obrigatória').max(2000),
+  metodologiaFechamento: z.string().trim().min(1, 'Metodologia de fechamento é obrigatória').max(2000),
+  recursos: z.string().trim().min(1, 'Recursos didáticos são obrigatórios').max(2000),
   avaliacao: z.string().trim().min(1, 'Avaliação é obrigatória').max(2000),
-  semanas: z.array(z.object({
-    numero: z.number().min(1).max(6),
-    metodologia: z.string().trim().min(1, 'Metodologia é obrigatória').max(2000),
-    recursos: z.string().trim().min(1, 'Recursos são obrigatórios').max(1000),
-  })).min(1, 'Pelo menos uma semana é obrigatória'),
+  referencias: z.string().trim().max(2000).optional(),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
